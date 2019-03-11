@@ -3,6 +3,7 @@
 // commit 29481466d7c1b3e71c08f0013500534b3a8ed6c7
 
 #include "llvm/Pass.h"
+#include "llvm/IR/Module.h"
 #include "llvm/IR/Function.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -11,12 +12,14 @@
 using namespace llvm;
 
 namespace {
-    struct FvPass : public FunctionPass {
+    struct FvPass : public ModulePass {
+        
         static char ID;
-        FvPass() : FunctionPass(ID) {}
+        
+        FvPass() : ModulePass(ID) {}
 
-        virtual bool runOnFunction(Function &F) {
-            errs() << F.getName() << "\n";
+        virtual bool runOnModule(Module &M) {
+            errs() << M.getName() << "\n";
             return false;
         }
     };
