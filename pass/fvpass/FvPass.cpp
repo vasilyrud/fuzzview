@@ -28,4 +28,5 @@ static void registerFvPass(const PassManagerBuilder &, legacy::PassManagerBase &
     PM.add(new FvPass());
 }
 
-static RegisterStandardPasses RegisterMyPass(PassManagerBuilder::EP_EarlyAsPossible, registerFvPass);
+static RegisterStandardPasses RegisterFvPass(PassManagerBuilder::EP_OptimizerLast, registerFvPass);
+static RegisterStandardPasses RegisterFvPass0(PassManagerBuilder::EP_EnabledOnOptLevel0, registerFvPass);
