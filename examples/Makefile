@@ -1,12 +1,19 @@
-# Some modern version of clang is mandatory
-# for building the examples.
+# A modern version of clang is needed
+# to build the examples.
 CC = clang
 
 CFLAGS = -O0 -Wall -g
+CFLAGS += -fsanitize-coverage=trace-pc-guard
 CFLAGS += -Wno-nullability-completeness
 CFLAGS += -Wno-unused-variable
 
+LDFLAGS = -O0 -Wall -g
+LDFLAGS += -fsanitize=address
+LDFLAGS += -Wno-nullability-completeness
+LDFLAGS += -Wno-unused-variable
+
 BIN = bin
+SANCOV = ../rt/sancov.c
 
 PROGS = simple_1
 ALL_FILES = $(PROGS) common
@@ -18,7 +25,7 @@ all: $(ALL_FILES_O) $(ALL_FILES_BC) $(PROGS)
 	$(CC) $(CFLAGS) -emit-llvm -c $< -o $@
 
 simple_1: simple_1.bc
-	$(CC) $(CFLAGS) $< common.bc -o $(BIN)/$@
+	$(CC) $(LDFLAGS) $< common.bc $(SANCOV) -o $(BIN)/$@
 
 clean:
 	rm *.o || true
