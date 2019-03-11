@@ -3,12 +3,16 @@
 CC = clang
 
 CFLAGS = -O0 -Wall -g
-CFLAGS += -fsanitize-coverage=trace-pc-guard
+# CFLAGS += -fsanitize-coverage=edge,trace-pc-guard
 CFLAGS += -Wno-nullability-completeness
 CFLAGS += -Wno-unused-variable
+CFLAGS += -Xclang
+CFLAGS += -load
+CFLAGS += -Xclang
+CFLAGS += ../pass/build/fvpass/libFvPass.so
 
 LDFLAGS = -O0 -Wall -g
-LDFLAGS += -fsanitize=address
+# LDFLAGS += -fsanitize=address
 LDFLAGS += -Wno-nullability-completeness
 LDFLAGS += -Wno-unused-variable
 
@@ -25,7 +29,7 @@ all: $(ALL_FILES_O) $(ALL_FILES_BC) $(PROGS)
 	$(CC) $(CFLAGS) -emit-llvm -c $< -o $@
 
 simple_1: simple_1.bc
-	$(CC) $(LDFLAGS) $< common.bc $(SANCOV) -o $(BIN)/$@
+	$(CC) $(LDFLAGS) $< common.bc -o $(BIN)/$@
 
 clean:
 	rm *.o || true

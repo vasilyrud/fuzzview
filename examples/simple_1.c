@@ -21,6 +21,7 @@ int C() {
     return 12;
 }
 
+
 int D() {
     write(1, NULL, 0);
 
@@ -47,12 +48,20 @@ int A(int a) {
 }
 
 
+void foo(int *a) {
+    if (a)
+        *a = 0;
+}
+
+
 int main() {
     int (*c)(void) = &C;
     int (*d)(void) = &D;
 
     A(6);
     Z();
+
+    foo(NULL);
 
     return 0;
 }

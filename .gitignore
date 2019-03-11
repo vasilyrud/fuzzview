@@ -6,4 +6,6 @@ examples/*.ll
 examples/*.o
 examples/bin/*
 
+pass/build
+
 !*.gitkeep
