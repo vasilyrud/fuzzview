@@ -6,6 +6,8 @@
 #include <unistd.h>
 
 #include "common.h"
+#include "subA/common.h"
+#include "subB/common.h"
 
 
 int B() {
@@ -60,6 +62,8 @@ int main() {
 
     A(6);
     Z();
+    ZA();
+    ZB();
 
     foo(NULL);
 
