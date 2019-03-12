@@ -11,6 +11,8 @@
 
 #include "nlohmann/json.hpp"
 
+#include "Cfg.hpp"
+
 using namespace llvm;
 
 namespace {
@@ -22,6 +24,10 @@ struct FvPass : public ModulePass {
 
     virtual bool runOnModule(Module &M);
 
+  private:
+
+    fv::Cfg cfg;
+
 };
 }
 
@@ -30,6 +36,8 @@ char FvPass::ID = 0;
 bool FvPass::runOnModule(Module &M) {
 
     errs() << M.getName() << "\n";
+
+    cfg = fv::Cfg();
 
     return false;
 }
