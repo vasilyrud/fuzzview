@@ -18,14 +18,19 @@ namespace {
         
         FvPass() : ModulePass(ID) {}
 
-        virtual bool runOnModule(Module &M) {
-            errs() << M.getName() << "\n";
-            return false;
-        }
+        virtual bool runOnModule(Module &M);
+
     };
 }
 
 char FvPass::ID = 0;
+
+bool FvPass::runOnModule(Module &M) {
+
+    errs() << M.getName() << "\n";
+
+    return false;
+}
 
 static void registerFvPass(const PassManagerBuilder &, legacy::PassManagerBase &PM) {
     PM.add(new FvPass());
