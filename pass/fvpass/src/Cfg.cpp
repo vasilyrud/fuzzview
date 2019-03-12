@@ -1,4 +1,3 @@
-
 #include "Cfg.hpp"
 
 using namespace fv;

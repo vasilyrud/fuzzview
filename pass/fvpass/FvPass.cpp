@@ -11,7 +11,7 @@
 
 #include "nlohmann/json.hpp"
 
-#include "Cfg.hpp"
+#include "Processor.hpp"
 
 using namespace llvm;
 
@@ -26,7 +26,7 @@ struct FvPass : public ModulePass {
 
   private:
 
-    fv::Cfg cfg;
+    fv::Processor processor;
 
 };
 }
@@ -37,7 +37,8 @@ bool FvPass::runOnModule(Module &M) {
 
     errs() << M.getName() << "\n";
 
-    cfg = fv::Cfg();
+    processor = fv::Processor();
+    processor.processModule(M);
 
     return false;
 }
