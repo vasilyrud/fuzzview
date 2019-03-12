@@ -9,18 +9,20 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 
+#include "nlohmann/json.hpp"
+
 using namespace llvm;
 
 namespace {
-    struct FvPass : public ModulePass {
-        
-        static char ID;
-        
-        FvPass() : ModulePass(ID) {}
+struct FvPass : public ModulePass {
+    
+    static char ID;
+    
+    FvPass() : ModulePass(ID) {}
 
-        virtual bool runOnModule(Module &M);
+    virtual bool runOnModule(Module &M);
 
-    };
+};
 }
 
 char FvPass::ID = 0;
