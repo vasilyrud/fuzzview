@@ -11,15 +11,17 @@ namespace fv {
 
 class Processor {
 
-  private:
-
-    Cfg cfg_maker;
-
   public:
 
     Processor();
 
     void processModule(llvm::Module &M);
+
+  private:
+
+    Cfg cfg_maker;
+
+    bool hasFuncDef(llvm::Module &M);
 
 };
 
