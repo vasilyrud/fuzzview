@@ -140,6 +140,14 @@ void CfgBuilder::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
     addCalls(B, calls_json);
     block_json["calls"] = calls_json;
 
+    json prev_json = json::array();
+    addPrev(B, prev_json);
+    block_json["prev"] = prev_json;
+
+    json next_json = json::array();
+    addNext(B, next_json);
+    block_json["next"] = next_json;
+
     json edges_json = json::array();
     addEdges(B, edges_json);
     block_json["edges"] = edges_json;
@@ -205,6 +213,28 @@ std::string CfgBuilder::getFuncTypeStr(llvm::FunctionType *func_type) {
     ostream.flush();
 
     return func_type_str;
+}
+
+void CfgBuilder::addPrev(llvm::BasicBlock &B, json &prev_json) {
+
+    for (
+        llvm::pred_iterator iter = llvm::pred_begin(&B), end = llvm::pred_end(&B);
+        iter != end;
+        ++iter
+    ) {
+        prev_json.push_back(GET_BLOCK_ID(*iter));
+    }
+}
+
+void CfgBuilder::addNext(llvm::BasicBlock &B, json &next_json) {
+
+    for (
+        llvm::succ_iterator iter = llvm::succ_begin(&B), end = llvm::succ_end(&B);
+        iter != end;
+        ++iter
+    ) {
+        next_json.push_back(GET_BLOCK_ID(*iter));
+    }
 }
 
 void CfgBuilder::addEdges(llvm::BasicBlock &B, json &edges_json) {

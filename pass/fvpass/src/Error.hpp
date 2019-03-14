@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "llvm/Support/raw_ostream.h"
+
 class Error {
 
   private:
