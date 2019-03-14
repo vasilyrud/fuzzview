@@ -5,14 +5,13 @@
 #include <fstream>
 #include <iomanip>
 
-#include "llvm/IR/Module.h"
 #include "llvm/IR/Instructions.h"
-#include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/Support/Path.h"
 
 #include "nlohmann/json.hpp"
 
 #include "Error.hpp"
+#include "Metadata.hpp"
 
 #define NICE_JSON_ENV_VAR "FV_NICE_JSON"
 

@@ -3,16 +3,7 @@
 
 #include <iostream>
 
-#include "llvm/IR/Module.h"
-
 #include "CfgBuilder.hpp"
-
-#define METADATA_BLOCK_ID "fv.block.id"
-
-#define SET_METADATA(WHERE, KEY, DATA) \
-    (WHERE)->setMetadata(KEY, \
-            llvm::MDNode::get((WHERE)->getContext(), \
-                llvm::MDString::get((WHERE)->getContext(), DATA)));
 
 namespace fv {
 

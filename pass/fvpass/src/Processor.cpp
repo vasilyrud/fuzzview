@@ -39,7 +39,7 @@ void Processor::processModule(llvm::Module &M) {
         block_counter = 0;
         for (auto &B : F) {
 
-            SET_METADATA(
+            Metadata::set(
                 B.getTerminator(), 
                 METADATA_BLOCK_ID, 
                 std::to_string(block_counter)
@@ -48,6 +48,7 @@ void Processor::processModule(llvm::Module &M) {
             block_counter++;
         }
 
+        // Then, actually process them.
         block_counter = 0;
         for (auto &B : F) {
 

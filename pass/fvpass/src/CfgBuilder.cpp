@@ -209,7 +209,9 @@ std::string CfgBuilder::getFuncTypeStr(llvm::FunctionType *func_type) {
 
 void CfgBuilder::addEdges(llvm::BasicBlock &B, json &edges_json) {
 
-    // 
+    auto *term_inst = B.getTerminator();
+
+    std::string block_id = Metadata::get(term_inst, METADATA_BLOCK_ID);
 }
 
 void CfgBuilder::save() {
