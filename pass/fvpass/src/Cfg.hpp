@@ -6,6 +6,7 @@
 #include <iomanip>
 
 #include "llvm/IR/Module.h"
+#include "llvm/IR/Instructions.h"
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/Support/Path.h"
 
@@ -37,6 +38,9 @@ class Cfg {
 
     std::string full_file_path;
     std::string relative_file_path;
+
+    void addCalls(llvm::BasicBlock &B, json &calls_json);
+    void addCall(llvm::CallInst *call_inst, json &calls_json);
 
     llvm::Instruction *getFirstInstruction(llvm::Module &M);
     std::string getFullFilePath(llvm::Module &M);

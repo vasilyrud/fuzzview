@@ -112,7 +112,7 @@ void Cfg::addFunction(llvm::Function &F, uint32_t func_number) {
 
     json func_json = json::object();
 
-    func_json["func_number"] = func_number;
+    func_json["number"] = func_number;
     func_json["blocks"] = json::object();
 
     file_json["functions"][func_name] = func_json;
@@ -125,11 +125,46 @@ void Cfg::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
 
     json block_json = json::object();
 
-    block_json["block_number"] = block_number;
-    block_json["calls"] = json::object();
-    block_json["edges"] = json::object();
+    block_json["number"] = block_number;
+    
+    json calls_json = json::array();
+    addCalls(B, calls_json);
+    block_json["calls"] = calls_json;
+
+    block_json["edges"] = json::array();
 
     file_json["functions"][func_name]["blocks"][block_name] = block_json;
+}
+
+void Cfg::addCalls(llvm::BasicBlock &B, json &calls_json) {
+
+    for (auto &I : B) {
+        
+        auto *call_inst = llvm::dyn_cast<llvm::CallInst>(&I);
+
+        if (call_inst)
+            addCall(call_inst, calls_json);;
+    }
+}
+
+void Cfg::addCall(llvm::CallInst *call_inst, json &calls_json) {
+
+    json call_json = json::object();
+
+    auto *value = call_inst->getCalledValue()->stripPointerCasts();
+    auto *called_func = llvm::dyn_cast<llvm::Function>(value);
+
+    if (called_func) {
+
+        call_json["is_direct"] = true;
+        call_json["function"]  = called_func->getName().str();
+
+    } else {
+
+        call_json["is_direct"] = false;
+    }
+
+    calls_json.push_back(call_json);
 }
 
 void Cfg::save() {

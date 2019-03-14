@@ -7,9 +7,9 @@ include_directories(src lib)
 FILE(GLOB cppSrcs src/*.cpp)
 
 add_library(FvPass MODULE
+    lib/nlohmann/json.hpp
     FvPass.cpp
     ${cppSrcs}
-    lib/nlohmann/json.hpp
 )
 
 # Use C++11
