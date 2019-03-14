@@ -38,7 +38,10 @@ class Cfg {
     llvm::Instruction *getFirstInstruction(llvm::Module &M);
     std::string getFullFilePath(llvm::Module &M);
     std::string getRelativeFilePath(llvm::Module &M);
+
+    bool isExtensionDot(std::string raw_filename, size_t dot_location);
     std::string rmFileExtension(std::string raw_filename);
+    std::string getFileExtension(std::string raw_filename);
 
 };
 

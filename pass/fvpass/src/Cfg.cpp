@@ -4,34 +4,60 @@ using namespace fv;
 
 Cfg::Cfg() {}
 
+bool Cfg::isExtensionDot(std::string raw_filename, size_t dot_location) {
+    return (
+        dot_location == std::string::npos || // e.g. "test"
+        dot_location == 0                 || // e.g. ".test"
+        raw_filename[dot_location-1] == '/'  // e.g. "/.test"
+    );
+}
+
 /*
 * Removes the last extension from the filename, e.g.:
-* test.c   -> test
-* test.c.c -> test.c
-* .test    -> .test
+* "test.c"   -> "test"
+* "test.c.c" -> "test.c"
+* ".test"    -> ".test"
 */
 std::string Cfg::rmFileExtension(std::string raw_filename) {
 
     std::string new_filename = "";
 
     if (raw_filename.size() == 0)
-        Error::fatal("Invalid module filename: " + raw_filename);
+        Error::fatal("Empty module filename.");
 
-    int last_dot = -1;
-    for (int i = 0, end = raw_filename.size(); i < end; i++)
-        if (raw_filename[i] == '.')
-            last_dot = i;
-
-    if (last_dot == -1 || // e.g. "test"
-        last_dot == 0  || // e.g. ".test"
-        raw_filename[last_dot-1] == '/' // e.g. "/.test"
-    ) return raw_filename;
+    size_t last_dot = raw_filename.find_last_of('.');
+    if (isExtensionDot(raw_filename, last_dot))
+        return raw_filename;
 
     // Copy old filename up until the last dot
-    for (int i = 0; i < last_dot; i++)
+    for (size_t i = 0; i < last_dot; i++)
         new_filename += raw_filename[i];
 
     return new_filename;
+}
+
+/*
+* Gets the last extension from the filename, e.g.:
+* "test.c"   -> ".c"
+* "test.c.c" -> ".c"
+* ".test"    -> ""
+*/
+std::string Cfg::getFileExtension(std::string raw_filename) {
+
+    std::string extension = "";
+
+    if (raw_filename.size() == 0)
+        Error::fatal("Empty module filename.");
+
+    size_t last_dot = raw_filename.find_last_of('.');
+    if (isExtensionDot(raw_filename, last_dot))
+        return extension;
+
+    // Copy extension, including the dot
+    for (size_t i = last_dot, end = raw_filename.size(); i < end; i++)
+        extension += raw_filename[i];
+
+    return extension;
 }
 
 llvm::Instruction *Cfg::getFirstInstruction(llvm::Module &M) {
@@ -75,7 +101,8 @@ void Cfg::add_module(llvm::Module &M) {
     full_file_path = getFullFilePath(M);
     relative_file_path = getRelativeFilePath(M);
 
-    file_json["file_path"] = full_file_path;
+    file_json["file_path"] = rmFileExtension(full_file_path);
+    file_json["source_extension"] = getFileExtension(full_file_path);
     file_json["functions"] = json::object();
 }
 
