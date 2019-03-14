@@ -1,10 +1,10 @@
-#include "Cfg.hpp"
+#include "CfgBuilder.hpp"
 
 using namespace fv;
 
-Cfg::Cfg() {}
+CfgBuilder::CfgBuilder() {}
 
-bool Cfg::isExtensionDot(std::string raw_filename, size_t dot_location) {
+bool CfgBuilder::isExtensionDot(std::string raw_filename, size_t dot_location) {
     return (
         dot_location == std::string::npos || // e.g. "test"
         dot_location == 0                 || // e.g. ".test"
@@ -18,7 +18,7 @@ bool Cfg::isExtensionDot(std::string raw_filename, size_t dot_location) {
 * "test.c.c" -> "test.c"
 * ".test"    -> ".test"
 */
-std::string Cfg::rmFileExtension(std::string raw_filename) {
+std::string CfgBuilder::rmFileExtension(std::string raw_filename) {
 
     std::string new_filename = "";
 
@@ -42,7 +42,7 @@ std::string Cfg::rmFileExtension(std::string raw_filename) {
 * "test.c.c" -> ".c"
 * ".test"    -> ""
 */
-std::string Cfg::getFileExtension(std::string raw_filename) {
+std::string CfgBuilder::getFileExtension(std::string raw_filename) {
 
     std::string extension = "";
 
@@ -60,7 +60,7 @@ std::string Cfg::getFileExtension(std::string raw_filename) {
     return extension;
 }
 
-llvm::Instruction *Cfg::getFirstInstruction(llvm::Module &M) {
+llvm::Instruction *CfgBuilder::getFirstInstruction(llvm::Module &M) {
 
     auto F_iter = M.begin();
     while (F_iter->isDeclaration() && F_iter != M.end()) F_iter++;
@@ -83,7 +83,7 @@ llvm::Instruction *Cfg::getFirstInstruction(llvm::Module &M) {
     return &*I_iter;
 }
 
-std::string Cfg::getFullFilePath(llvm::Module &M) {
+std::string CfgBuilder::getFullFilePath(llvm::Module &M) {
 
     auto *I = getFirstInstruction(M);
     const llvm::DILocation *loc = I->getDebugLoc().get();
@@ -91,12 +91,12 @@ std::string Cfg::getFullFilePath(llvm::Module &M) {
     return loc->getDirectory().str() + "/" + loc->getFilename().str();
 }
 
-std::string Cfg::getRelativeFilePath(llvm::Module &M) {
+std::string CfgBuilder::getRelativeFilePath(llvm::Module &M) {
 
     return M.getName().str();
 }
 
-void Cfg::addModule(llvm::Module &M) {
+void CfgBuilder::addModule(llvm::Module &M) {
 
     full_file_path = getFullFilePath(M);
     relative_file_path = getRelativeFilePath(M);
@@ -106,7 +106,7 @@ void Cfg::addModule(llvm::Module &M) {
     file_json["functions"] = json::object();
 }
 
-void Cfg::addFunction(llvm::Function &F, uint32_t func_number) {
+void CfgBuilder::addFunction(llvm::Function &F, uint32_t func_number) {
 
     std::string func_name = F.getName().str();
 
@@ -118,7 +118,7 @@ void Cfg::addFunction(llvm::Function &F, uint32_t func_number) {
     file_json["functions"][func_name] = func_json;
 }
 
-void Cfg::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
+void CfgBuilder::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
 
     std::string block_name = std::to_string(block_number);
     std::string func_name  = B.getParent()->getName().str();
@@ -136,7 +136,7 @@ void Cfg::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
     file_json["functions"][func_name]["blocks"][block_name] = block_json;
 }
 
-void Cfg::addCalls(llvm::BasicBlock &B, json &calls_json) {
+void CfgBuilder::addCalls(llvm::BasicBlock &B, json &calls_json) {
 
     for (auto &I : B) {
         
@@ -147,14 +147,14 @@ void Cfg::addCalls(llvm::BasicBlock &B, json &calls_json) {
     }
 }
 
-bool Cfg::ignoredFunc(std::string &func_name) {
+bool CfgBuilder::ignoredFunc(std::string &func_name) {
 
     return (
         func_name == "llvm.dbg.declare"
     );
 }
 
-void Cfg::addCall(llvm::CallInst *call_inst, json &calls_json) {
+void CfgBuilder::addCall(llvm::CallInst *call_inst, json &calls_json) {
 
     json call_json = json::object();
 
@@ -178,7 +178,7 @@ void Cfg::addCall(llvm::CallInst *call_inst, json &calls_json) {
     calls_json.push_back(call_json);
 }
 
-void Cfg::save() {
+void CfgBuilder::save() {
 
     std::string cur_dir = ".";
     std::string full_path = cur_dir + "/" + rmFileExtension(relative_file_path) + ".cfg.json";

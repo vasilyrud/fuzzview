@@ -1,5 +1,5 @@
-#ifndef FV_CFG_H
-#define FV_CFG_H
+#ifndef FV_CFG_BUILDER_H
+#define FV_CFG_BUILDER_H
 
 #include <iostream>
 #include <fstream>
@@ -18,13 +18,13 @@
 
 namespace fv {
 
-class Cfg {
+class CfgBuilder {
 
     using json = nlohmann::json;
 
   public:
 
-    Cfg();
+    CfgBuilder();
 
     void addModule(llvm::Module &M);
     void addFunction(llvm::Function &F, uint32_t func_number);

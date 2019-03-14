@@ -5,7 +5,7 @@
 
 #include "llvm/IR/Module.h"
 
-#include "Cfg.hpp"
+#include "CfgBuilder.hpp"
 
 namespace fv {
 
@@ -19,7 +19,7 @@ class Processor {
 
   private:
 
-    Cfg cfg_maker;
+    CfgBuilder cfg_builder;
 
     bool hasFuncDef(llvm::Module &M);
 
