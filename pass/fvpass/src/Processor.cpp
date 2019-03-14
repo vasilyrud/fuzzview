@@ -60,5 +60,5 @@ void Processor::processModule(llvm::Module &M) {
         func_counter++;
     }
 
-    cfg_builder.save();
+    cfg_builder.save(M);
 }

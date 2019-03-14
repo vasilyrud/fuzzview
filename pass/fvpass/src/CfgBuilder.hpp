@@ -37,14 +37,11 @@ class CfgBuilder {
     void addFunction(llvm::Function &F, uint32_t func_number);
     void addBlock(llvm::BasicBlock &B, uint32_t block_number);
 
-    void save();
+    void save(llvm::Module &M);
 
   private:
 
     json file_json;
-
-    std::string full_file_path;
-    std::string relative_file_path;
 
     void addCalls(llvm::BasicBlock &B, json &calls_json);
     void addCall(llvm::CallInst *call_inst, json &calls_json);
@@ -54,13 +51,14 @@ class CfgBuilder {
     void addNext(llvm::BasicBlock &B, json &next_json);
     void addBranch(llvm::BasicBlock &B, json &branch_json);
 
-    llvm::Instruction *getFirstInstruction(llvm::Module &M);
-    std::string getFullFilePath(llvm::Module &M);
-    std::string getRelativeFilePath(llvm::Module &M);
+    std::string getPath(llvm::Module &M);
+    std::string getName(llvm::Module &M);
+    std::string getExtension(llvm::Module &M);
 
     bool isExtensionDot(std::string raw_filename, size_t dot_location);
     std::string rmFileExtension(std::string raw_filename);
     std::string getFileExtension(std::string raw_filename);
+    llvm::Instruction *getFirstInstruction(llvm::Module &M);
 
 };
 

@@ -83,26 +83,36 @@ llvm::Instruction *CfgBuilder::getFirstInstruction(llvm::Module &M) {
     return &*I_iter;
 }
 
-std::string CfgBuilder::getFullFilePath(llvm::Module &M) {
+std::string CfgBuilder::getPath(llvm::Module &M) {
 
     auto *I = getFirstInstruction(M);
     const llvm::DILocation *loc = I->getDebugLoc().get();
 
-    return loc->getDirectory().str() + "/" + loc->getFilename().str();
+    return loc->getDirectory().str();
 }
 
-std::string CfgBuilder::getRelativeFilePath(llvm::Module &M) {
+std::string CfgBuilder::getName(llvm::Module &M) {
 
-    return M.getName().str();
+    // Double-check that debug info matches LLVM info.
+    assert(
+        getFirstInstruction(M)->getDebugLoc().get()->getFilename().str() 
+        == M.getName().str()
+    );
+
+    return rmFileExtension(M.getName().str());
+}
+
+std::string CfgBuilder::getExtension(llvm::Module &M) {
+
+    return getFileExtension(M.getName().str());
 }
 
 void CfgBuilder::addModule(llvm::Module &M) {
 
-    full_file_path = getFullFilePath(M);
-    relative_file_path = getRelativeFilePath(M);
+    file_json["path"] = getPath(M);
+    file_json["name"] = getName(M);
+    file_json["extension"] = getExtension(M);
 
-    file_json["file_path"] = rmFileExtension(full_file_path);
-    file_json["source_extension"] = getFileExtension(full_file_path);
     file_json["functions"] = json::object();
 }
 
@@ -180,19 +190,19 @@ void CfgBuilder::addCall(llvm::CallInst *call_inst, json &calls_json) {
 
         if (ignoredFunc(called_func_name)) return;
 
-        call_json["is_direct"] = true;
+        call_json["type"] = "direct";
         call_json["function"]  = called_func_name;
 
         func_type = called_func->getFunctionType();
 
     } else {
 
-        call_json["is_direct"] = false;
+        call_json["type"] = "indirect";
 
         func_type = call_inst->getFunctionType();
     }
 
-    call_json["function_type"] = getFuncTypeStr(func_type);
+    call_json["signature"] = getFuncTypeStr(func_type);
 
     calls_json.push_back(call_json);
 }
@@ -246,10 +256,10 @@ void CfgBuilder::addBranch(llvm::BasicBlock &B, json &branch_json) {
     term_inst_visitor.visit(term_inst);
 }
 
-void CfgBuilder::save() {
+void CfgBuilder::save(llvm::Module &M) {
 
     std::string cur_dir = ".";
-    std::string full_path = cur_dir + "/" + rmFileExtension(relative_file_path) + ".cfg.json";
+    std::string full_path = cur_dir + "/" + getName(M) + ".cfg.json";
 
     std::ofstream f;
     f.open (full_path, std::ios::out | std::ios::trunc);
@@ -259,7 +269,7 @@ void CfgBuilder::save() {
         if (getenv(NICE_JSON_ENV_VAR))
             f << std::setw(4) << file_json << "\n";
         else
-            f << file_json << "\n";
+            f << file_json;
 
         f.close();
     } else Error::fatal("Couldn't open file " + full_path);

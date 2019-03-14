@@ -35,8 +35,6 @@ char FvPass::ID = 0;
 
 bool FvPass::runOnModule(Module &M) {
 
-    errs() << M.getName() << "\n";
-
     processor = fv::Processor();
     processor.processModule(M);
 
