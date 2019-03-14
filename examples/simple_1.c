@@ -46,6 +46,18 @@ int A(int a) {
         D();
     }
 
+    switch (a) {
+        case 1:
+            C();
+            break;
+        case 2:
+            D();
+            break;
+        default:
+            write(1, NULL, 0);
+            break;
+    }
+
     return 10;
 }
 

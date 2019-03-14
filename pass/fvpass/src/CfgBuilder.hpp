@@ -74,11 +74,11 @@ struct CfgTermInstVisitor : public llvm::InstVisitor<CfgTermInstVisitor, void> {
     CfgTermInstVisitor(llvm::BasicBlock &B, json &branch_json) : 
     B(B), branch_json(branch_json) { }
 
-    void visitBranchInst(llvm::BranchInst &BI);
-    void visitSwitchInst(llvm::SwitchInst &SI);
-    void visitIndirectBrInst(llvm::IndirectBrInst &II);
+    void visitBranchInst(llvm::BranchInst &branch_inst);
+    void visitSwitchInst(llvm::SwitchInst &switch_inst);
+    void visitIndirectBrInst(llvm::IndirectBrInst &indir_br_inst);
 
-    void visitTerminatorInst(llvm::TerminatorInst &TI);
+    void visitTerminatorInst(llvm::TerminatorInst &term_inst);
     void visitInstruction(llvm::Instruction &I);
 
 };
