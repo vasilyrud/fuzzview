@@ -38,6 +38,7 @@ class Cfg {
     llvm::Instruction *getFirstInstruction(llvm::Module &M);
     std::string getFullFilePath(llvm::Module &M);
     std::string getRelativeFilePath(llvm::Module &M);
+    std::string rmFileExtension(std::string raw_filename);
 
 };
 

@@ -4,6 +4,36 @@ using namespace fv;
 
 Cfg::Cfg() {}
 
+/*
+* Removes the last extension from the filename, e.g.:
+* test.c   -> test
+* test.c.c -> test.c
+* .test    -> .test
+*/
+std::string Cfg::rmFileExtension(std::string raw_filename) {
+
+    std::string new_filename = "";
+
+    if (raw_filename.size() == 0)
+        Error::fatal("Invalid module filename: " + raw_filename);
+
+    int last_dot = -1;
+    for (int i = 0, end = raw_filename.size(); i < end; i++)
+        if (raw_filename[i] == '.')
+            last_dot = i;
+
+    if (last_dot == -1 || // e.g. "test"
+        last_dot == 0  || // e.g. ".test"
+        raw_filename[last_dot-1] == '/' // e.g. "/.test"
+    ) return raw_filename;
+
+    // Copy old filename up until the last dot
+    for (int i = 0; i < last_dot; i++)
+        new_filename += raw_filename[i];
+
+    return new_filename;
+}
+
 llvm::Instruction *Cfg::getFirstInstruction(llvm::Module &M) {
 
     auto F_iter = M.begin();
@@ -62,7 +92,7 @@ void Cfg::add_block(llvm::BasicBlock &B) {
 void Cfg::save() {
 
     std::string cur_dir = ".";
-    std::string full_path = cur_dir + "/" + relative_file_path + ".cfg.json";
+    std::string full_path = cur_dir + "/" + rmFileExtension(relative_file_path) + ".cfg.json";
 
     std::ofstream f;
     f.open (full_path, std::ios::out | std::ios::trunc);
@@ -70,7 +100,7 @@ void Cfg::save() {
     if (f.is_open()) {
         
         f << file_json << "\n";
-        
+
         f.close();
     } else Error::fatal("Couldn't open file " + full_path);
 }
