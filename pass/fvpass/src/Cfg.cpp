@@ -44,6 +44,10 @@ void Cfg::add_module(llvm::Module &M) {
 
     full_file_path = getFullFilePath(M);
     module_name = getModuleName(M);
+
+    file_json["file_path"] = full_file_path;
+    file_json["module_name"] = module_name;
+    file_json["functions"] = json::object();
 }
 
 void Cfg::add_function(llvm::Function &F) {
@@ -71,7 +75,9 @@ void Cfg::save() {
     f.open (full_path, std::ios::out | std::ios::trunc);
 
     if (f.is_open()) {
-        f << "Test\n";
+        
+        f << file_json << "\n";
+        
         f.close();
     } else Error::fatal("Couldn't open file " + full_path);
 }

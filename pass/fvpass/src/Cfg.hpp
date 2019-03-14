@@ -8,11 +8,15 @@
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/Support/Path.h"
 
+#include "nlohmann/json.hpp"
+
 #include "Error.hpp"
 
 namespace fv {
 
 class Cfg {
+
+    using json = nlohmann::json;
 
   public:
 
@@ -25,6 +29,8 @@ class Cfg {
     void save();
 
   private:
+
+    json file_json;
 
     std::string full_file_path;
     std::string module_name;
