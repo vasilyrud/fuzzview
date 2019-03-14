@@ -108,6 +108,9 @@ void CfgBuilder::addModule(llvm::Module &M) {
 
 void CfgBuilder::addFunction(llvm::Function &F, uint32_t func_number) {
 
+    if (!file_json.count("functions"))
+        Error::fatal("Did not call addModule yet.");
+
     std::string func_name = F.getName().str();
 
     json func_json = json::object();
@@ -120,8 +123,14 @@ void CfgBuilder::addFunction(llvm::Function &F, uint32_t func_number) {
 
 void CfgBuilder::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
 
+    if (!file_json.count("functions"))
+        Error::fatal("Did not call addModule yet.");
+
     std::string block_name = std::to_string(block_number);
     std::string func_name  = B.getParent()->getName().str();
+
+    if (!file_json["functions"].count(func_name))
+        Error::fatal("Did not call addFunction on " + func_name + " yet.");
 
     json block_json = json::object();
 
@@ -131,7 +140,9 @@ void CfgBuilder::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
     addCalls(B, calls_json);
     block_json["calls"] = calls_json;
 
-    block_json["edges"] = json::array();
+    json edges_json = json::array();
+    addEdges(B, edges_json);
+    block_json["edges"] = edges_json;
 
     file_json["functions"][func_name]["blocks"][block_name] = block_json;
 }
@@ -145,24 +156,6 @@ void CfgBuilder::addCalls(llvm::BasicBlock &B, json &calls_json) {
         if (call_inst)
             addCall(call_inst, calls_json);;
     }
-}
-
-bool CfgBuilder::ignoredFunc(std::string &func_name) {
-
-    return (
-        func_name == "llvm.dbg.declare"
-    );
-}
-
-std::string CfgBuilder::getFuncTypeStr(llvm::FunctionType *func_type) {
-
-    std::string func_type_str;
-    llvm::raw_string_ostream ostream(func_type_str);   
-
-    func_type->print(ostream);
-    ostream.flush();
-
-    return func_type_str;
 }
 
 void CfgBuilder::addCall(llvm::CallInst *call_inst, json &calls_json) {
@@ -194,6 +187,29 @@ void CfgBuilder::addCall(llvm::CallInst *call_inst, json &calls_json) {
     call_json["function_type"] = getFuncTypeStr(func_type);
 
     calls_json.push_back(call_json);
+}
+
+bool CfgBuilder::ignoredFunc(std::string &func_name) {
+
+    return (
+        func_name == "llvm.dbg.declare"
+    );
+}
+
+std::string CfgBuilder::getFuncTypeStr(llvm::FunctionType *func_type) {
+
+    std::string func_type_str;
+    llvm::raw_string_ostream ostream(func_type_str);   
+
+    func_type->print(ostream);
+    ostream.flush();
+
+    return func_type_str;
+}
+
+void CfgBuilder::addEdges(llvm::BasicBlock &B, json &edges_json) {
+
+    // 
 }
 
 void CfgBuilder::save() {

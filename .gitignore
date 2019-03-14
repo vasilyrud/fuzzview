@@ -1,6 +1,7 @@
 .vscode
 *.DS_Store
 
+examples/**/*.bc.tmp
 examples/**/*.cfg.json
 examples/**/*.bc
 examples/**/*.ll
