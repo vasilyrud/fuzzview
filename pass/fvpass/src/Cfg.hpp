@@ -41,6 +41,7 @@ class Cfg {
 
     void addCalls(llvm::BasicBlock &B, json &calls_json);
     void addCall(llvm::CallInst *call_inst, json &calls_json);
+    bool ignoredFunc(std::string &func_name);
 
     llvm::Instruction *getFirstInstruction(llvm::Module &M);
     std::string getFullFilePath(llvm::Module &M);

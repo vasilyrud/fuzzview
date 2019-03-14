@@ -147,6 +147,13 @@ void Cfg::addCalls(llvm::BasicBlock &B, json &calls_json) {
     }
 }
 
+bool Cfg::ignoredFunc(std::string &func_name) {
+
+    return (
+        func_name == "llvm.dbg.declare"
+    );
+}
+
 void Cfg::addCall(llvm::CallInst *call_inst, json &calls_json) {
 
     json call_json = json::object();
@@ -156,8 +163,12 @@ void Cfg::addCall(llvm::CallInst *call_inst, json &calls_json) {
 
     if (called_func) {
 
+        auto called_func_name = called_func->getName().str();
+
+        if (ignoredFunc(called_func_name)) return;
+
         call_json["is_direct"] = true;
-        call_json["function"]  = called_func->getName().str();
+        call_json["function"]  = called_func_name;
 
     } else {
 
