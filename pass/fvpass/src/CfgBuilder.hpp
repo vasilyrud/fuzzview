@@ -42,6 +42,7 @@ class CfgBuilder {
     void addCalls(llvm::BasicBlock &B, json &calls_json);
     void addCall(llvm::CallInst *call_inst, json &calls_json);
     bool ignoredFunc(std::string &func_name);
+    std::string getFuncTypeStr(llvm::FunctionType *func_type);
 
     llvm::Instruction *getFirstInstruction(llvm::Module &M);
     std::string getFullFilePath(llvm::Module &M);

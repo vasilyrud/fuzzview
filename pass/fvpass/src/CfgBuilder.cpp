@@ -154,9 +154,21 @@ bool CfgBuilder::ignoredFunc(std::string &func_name) {
     );
 }
 
+std::string CfgBuilder::getFuncTypeStr(llvm::FunctionType *func_type) {
+
+    std::string func_type_str;
+    llvm::raw_string_ostream ostream(func_type_str);   
+
+    func_type->print(ostream);
+    ostream.flush();
+
+    return func_type_str;
+}
+
 void CfgBuilder::addCall(llvm::CallInst *call_inst, json &calls_json) {
 
     json call_json = json::object();
+    llvm::FunctionType *func_type;
 
     auto *value = call_inst->getCalledValue()->stripPointerCasts();
     auto *called_func = llvm::dyn_cast<llvm::Function>(value);
@@ -170,10 +182,16 @@ void CfgBuilder::addCall(llvm::CallInst *call_inst, json &calls_json) {
         call_json["is_direct"] = true;
         call_json["function"]  = called_func_name;
 
+        func_type = called_func->getFunctionType();
+
     } else {
 
         call_json["is_direct"] = false;
+
+        func_type = call_inst->getFunctionType();
     }
+
+    call_json["function_type"] = getFuncTypeStr(func_type);
 
     calls_json.push_back(call_json);
 }
