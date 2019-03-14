@@ -79,12 +79,19 @@ void Cfg::add_module(llvm::Module &M) {
     file_json["functions"] = json::object();
 }
 
-void Cfg::add_function(llvm::Function &F) {
+void Cfg::add_function(llvm::Function &F, uint32_t func_number) {
 
-    // Create json object for function
+    std::string func_name = F.getName().str();
+
+    json func_json = json::object();
+
+    func_json["func_number"] = func_number;
+    func_json["blocks"] = json::object();
+
+    file_json["functions"][func_name] = func_json;
 }
 
-void Cfg::add_block(llvm::BasicBlock &B) {
+void Cfg::add_block(llvm::BasicBlock &B, uint32_t block_number) {
 
     // Add block in its function
 }

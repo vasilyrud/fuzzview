@@ -23,8 +23,8 @@ class Cfg {
     Cfg();
 
     void add_module(llvm::Module &M);
-    void add_function(llvm::Function &F);
-    void add_block(llvm::BasicBlock &B);
+    void add_function(llvm::Function &F, uint32_t func_number);
+    void add_block(llvm::BasicBlock &B, uint32_t block_number);
 
     void save();
 
