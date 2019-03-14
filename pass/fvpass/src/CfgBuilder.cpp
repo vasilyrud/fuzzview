@@ -148,9 +148,9 @@ void CfgBuilder::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
     addNext(B, next_json);
     block_json["next"] = next_json;
 
-    json edges_json = json::array();
-    addEdges(B, edges_json);
-    block_json["edges"] = edges_json;
+    json branch_json = json::object();
+    addBranch(B, branch_json);
+    block_json["branch"] = branch_json;
 
     file_json["functions"][func_name]["blocks"][block_name] = block_json;
 }
@@ -237,11 +237,13 @@ void CfgBuilder::addNext(llvm::BasicBlock &B, json &next_json) {
     }
 }
 
-void CfgBuilder::addEdges(llvm::BasicBlock &B, json &edges_json) {
+void CfgBuilder::addBranch(llvm::BasicBlock &B, json &branch_json) {
 
     auto *term_inst = B.getTerminator();
 
-    std::string block_id = Metadata::get(term_inst, METADATA_BLOCK_ID);
+    auto term_inst_visitor = CfgTermInstVisitor(B, branch_json);
+
+    term_inst_visitor.visit(term_inst);
 }
 
 void CfgBuilder::save() {
