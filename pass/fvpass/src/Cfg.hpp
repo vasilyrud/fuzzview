@@ -33,11 +33,11 @@ class Cfg {
     json file_json;
 
     std::string full_file_path;
-    std::string module_name;
+    std::string relative_file_path;
 
     llvm::Instruction *getFirstInstruction(llvm::Module &M);
     std::string getFullFilePath(llvm::Module &M);
-    std::string getModuleName(llvm::Module &M);
+    std::string getRelativeFilePath(llvm::Module &M);
 
 };
 

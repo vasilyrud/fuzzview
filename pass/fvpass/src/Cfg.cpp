@@ -35,7 +35,7 @@ std::string Cfg::getFullFilePath(llvm::Module &M) {
     return loc->getDirectory().str() + "/" + loc->getFilename().str();
 }
 
-std::string Cfg::getModuleName(llvm::Module &M) {
+std::string Cfg::getRelativeFilePath(llvm::Module &M) {
 
     return M.getName().str();
 }
@@ -43,10 +43,9 @@ std::string Cfg::getModuleName(llvm::Module &M) {
 void Cfg::add_module(llvm::Module &M) {
 
     full_file_path = getFullFilePath(M);
-    module_name = getModuleName(M);
+    relative_file_path = getRelativeFilePath(M);
 
     file_json["file_path"] = full_file_path;
-    file_json["module_name"] = module_name;
     file_json["functions"] = json::object();
 }
 
@@ -62,14 +61,8 @@ void Cfg::add_block(llvm::BasicBlock &B) {
 
 void Cfg::save() {
 
-    /*
-    * So far, seems to be a reliable way to
-    * save a file into same dir as the source
-    * file with LLVM.
-    */
-    std::string c_file_path = ".";
-
-    std::string full_path = c_file_path + "/" + module_name + ".cfg.json";
+    std::string cur_dir = ".";
+    std::string full_path = cur_dir + "/" + relative_file_path + ".cfg.json";
 
     std::ofstream f;
     f.open (full_path, std::ios::out | std::ios::trunc);
