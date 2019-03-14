@@ -120,7 +120,16 @@ void Cfg::addFunction(llvm::Function &F, uint32_t func_number) {
 
 void Cfg::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
 
-    // Add block in its function
+    std::string block_name = std::to_string(block_number);
+    std::string func_name  = B.getParent()->getName().str();
+
+    json block_json = json::object();
+
+    block_json["block_number"] = block_number;
+    block_json["calls"] = json::object();
+    block_json["edges"] = json::object();
+
+    file_json["functions"][func_name]["blocks"][block_name] = block_json;
 }
 
 void Cfg::save() {
@@ -133,7 +142,10 @@ void Cfg::save() {
 
     if (f.is_open()) {
         
-        f << file_json << "\n";
+        if (getenv(NICE_JSON_ENV_VAR))
+            f << std::setw(4) << file_json << "\n";
+        else
+            f << file_json << "\n";
 
         f.close();
     } else Error::fatal("Couldn't open file " + full_path);

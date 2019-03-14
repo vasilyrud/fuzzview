@@ -30,3 +30,9 @@ To compile examples with custom clang:
 cd $FUZZVIEW_DIR/examples
 make CC=$LLVM_HOME/bin/clang
 ```
+
+To make `.cfg.json` files readable:
+
+```
+FV_NICE_JSON=1 
+```
