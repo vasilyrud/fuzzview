@@ -7,17 +7,17 @@ class Error {
 
   private:
 
-    static void exit_start() {
+    static void exitStart() {
         std::cerr << '\n';
         std::cerr << "--------------------\n";
         std::cerr << "fuzzview pass ERROR:\n";
     }
 
-    static void exit_msg(std::string msg) {
+    static void exitMsg(std::string msg) {
         std::cerr << msg << '\n';
     }
 
-    static void exit_end() {
+    static void exitEnd() {
         std::cerr << "--------------------\n";
         std::cerr << '\n';
 
@@ -28,21 +28,21 @@ class Error {
 
     template<typename LLVM_TYPE>
     static void fatal(LLVM_TYPE *llvm_var, std::string msg) {
-        exit_start();
-        exit_msg(msg);
+        exitStart();
+        exitMsg(msg);
 
         if (llvm_var != nullptr) {
             std::cerr << "LLVM variable dump:\n";
             llvm_var->dump();
         }
         
-        exit_end();
+        exitEnd();
     }
 
     static void fatal(std::string msg) {
-        exit_start();
-        exit_msg(msg);
-        exit_end();
+        exitStart();
+        exitMsg(msg);
+        exitEnd();
     }
 
 };

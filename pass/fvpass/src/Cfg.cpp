@@ -96,7 +96,7 @@ std::string Cfg::getRelativeFilePath(llvm::Module &M) {
     return M.getName().str();
 }
 
-void Cfg::add_module(llvm::Module &M) {
+void Cfg::addModule(llvm::Module &M) {
 
     full_file_path = getFullFilePath(M);
     relative_file_path = getRelativeFilePath(M);
@@ -106,7 +106,7 @@ void Cfg::add_module(llvm::Module &M) {
     file_json["functions"] = json::object();
 }
 
-void Cfg::add_function(llvm::Function &F, uint32_t func_number) {
+void Cfg::addFunction(llvm::Function &F, uint32_t func_number) {
 
     std::string func_name = F.getName().str();
 
@@ -118,7 +118,7 @@ void Cfg::add_function(llvm::Function &F, uint32_t func_number) {
     file_json["functions"][func_name] = func_json;
 }
 
-void Cfg::add_block(llvm::BasicBlock &B, uint32_t block_number) {
+void Cfg::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
 
     // Add block in its function
 }
