@@ -13,3 +13,4 @@ def main():
     args = parser.parse_args()
 
     grapher = Grapher(args.project_src_dir)
+    grapher.generate_graphs()
