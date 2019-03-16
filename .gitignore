@@ -12,4 +12,6 @@ pass/fvpass/test/samples/bin/*
 
 pass/build
 
+__pycache__/
+
 !*.gitkeep

@@ -36,3 +36,9 @@ To make `.cfg.json` files readable:
 ```
 FV_NICE_JSON=1 
 ```
+
+Running fuzzview:
+
+```
+PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 fuzzview
+```
