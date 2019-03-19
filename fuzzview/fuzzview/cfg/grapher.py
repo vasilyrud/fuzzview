@@ -5,8 +5,8 @@ import fuzzview.const as const
 
 class GraphNode(object):
 
-    def __init__(self, cfg, func, block):
-        self.cfg = cfg
+    def __init__(self, module, func, block):
+        self.module = module
         self.func = func
         self.block = block
 
@@ -42,6 +42,7 @@ class Grapher(object):
 
         self.project_src_dir = project_src_dir
         self.cfg_files = []
+        self.graphs = []
 
         self._find_cfg_files()
 
@@ -56,8 +57,8 @@ class Grapher(object):
 
         for cfg_file in self.cfg_files:
             with open(cfg_file) as f:
-                cfg = json.load(f)
-                self._generate_file_graphs(cfg)
+                module = json.load(f)
+                self._generate_file_graphs(module)
 
     def _sorted_funcs(self, funcs_obj):
         return sorted(
@@ -65,10 +66,17 @@ class Grapher(object):
             key=lambda f: f['number']
         )
 
-    def _generate_file_graphs(self, cfg):
+    def _generate_file_graphs(self, module):
 
-        for func in self._sorted_funcs(cfg['functions']):
-            self._generate_func_graph(cfg, func)
+        for func in self._sorted_funcs(module['functions']):
+            func_grapher = FuncGrapher(module, func)
+            func_grapher.generate_graph()
+
+class FuncGrapher(object):
+
+    def __init__(self, module, func):
+        self.module = module
+        self.func = func
 
     def _min_block(self, blocks_obj):
         return min(
@@ -76,15 +84,15 @@ class Grapher(object):
             key=lambda f: f['number']
         )
 
-    def _generate_func_graph(self, cfg, func):
+    def generate_graph(self):
 
-        first_block = self._min_block(func['blocks'])
+        first_block = self._min_block(self.func['blocks'])
         assert not first_block['prev']
 
-        first_node = GraphNode(cfg, func, first_block)
+        first_node = GraphNode(self.module, self.func, first_block)
 
         block_width, block_height = first_node.get_dimensions()
 
-        print(func['name'] + ':' + first_block['name'])
+        print(self.func['name'] + ':' + first_block['name'])
         print(str(block_width) + 'x' + str(block_height))
         print(first_node)
