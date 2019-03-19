@@ -126,6 +126,7 @@ void CfgBuilder::addFunction(llvm::Function &F, uint32_t func_number) {
     json func_json = json::object();
 
     func_json["number"] = func_number;
+    func_json["name"] = func_name;
     func_json["blocks"] = json::object();
 
     file_json["functions"][func_name] = func_json;
@@ -145,6 +146,7 @@ void CfgBuilder::addBlock(llvm::BasicBlock &B, uint32_t block_number) {
     json block_json = json::object();
 
     block_json["number"] = block_number;
+    block_json["name"] = block_name;
     
     json calls_json = json::array();
     addCalls(B, calls_json);

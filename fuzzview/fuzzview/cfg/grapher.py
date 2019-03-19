@@ -3,6 +3,39 @@ import json
 
 import fuzzview.const as const
 
+class GraphNode(object):
+
+    def __init__(self, cfg, func, block):
+        self.cfg = cfg
+        self.func = func
+        self.block = block
+
+    def get_dimensions(self):
+        
+        max_num_edges = max(
+            len(self.block['prev']), 
+            len(self.block['next'])
+        )
+        block_width = max(1, max_num_edges)
+
+        block_height = len(self.block['calls']) + 1
+
+        return block_width, block_height
+
+    def __str__(self):
+
+        ret_str = ''
+
+        block_width, block_height = self.get_dimensions()
+        grid = [['.' for j in range(block_width)] for i in range(block_height)]
+
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                ret_str += '#'
+            ret_str += '\n'
+        
+        return ret_str
+
 class Grapher(object):
 
     def __init__(self, project_src_dir):
@@ -28,50 +61,30 @@ class Grapher(object):
 
     def _sorted_funcs(self, funcs_obj):
         return sorted(
-            funcs_obj.items(), 
-            key=lambda f: f[1]['number']
+            funcs_obj.values(), 
+            key=lambda f: f['number']
         )
 
     def _generate_file_graphs(self, cfg):
 
-        for func_name, func in self._sorted_funcs(cfg['functions']):
-            self._generate_func_graph(func_name, func)
+        for func in self._sorted_funcs(cfg['functions']):
+            self._generate_func_graph(cfg, func)
 
     def _min_block(self, blocks_obj):
         return min(
-            blocks_obj.items(),
-            key=lambda f: f[1]['number']
+            blocks_obj.values(),
+            key=lambda f: f['number']
         )
 
-    def _get_node_dimensions(self, block):
-        
-        max_num_edges = max(
-            len(block['prev']), 
-            len(block['next'])
-        )
-        block_width = max(1, max_num_edges)
+    def _generate_func_graph(self, cfg, func):
 
-        block_height = len(block['calls']) + 1
-
-        return block_width, block_height
-
-    def _print_node(self, node):
-
-        for i in range(len(node)):
-            for j in range(len(node[0])):
-                print('#', end='')
-            print('')
-
-    def _generate_func_graph(self, func_name, func):
-
-        first_block_id, first_block = self._min_block(func['blocks'])
+        first_block = self._min_block(func['blocks'])
         assert not first_block['prev']
 
-        block_width, block_height = self._get_node_dimensions(first_block)
+        first_node = GraphNode(cfg, func, first_block)
 
-        block_node = [['.' for j in range(block_width)] for i in range(block_height)]
+        block_width, block_height = first_node.get_dimensions()
 
-        print(func_name + ':' + first_block_id)
+        print(func['name'] + ':' + first_block['name'])
         print(str(block_width) + 'x' + str(block_height))
-        self._print_node(block_node)
-        print('')
+        print(first_node)

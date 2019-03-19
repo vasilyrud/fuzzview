@@ -85,6 +85,8 @@ def check_cfg():
     block = blocks['6']
     assert len(block['prev']) == 2
 
+    print("SUCCESS")
+
 def main():
 
     compile_prog()

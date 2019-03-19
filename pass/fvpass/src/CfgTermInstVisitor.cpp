@@ -2,7 +2,8 @@
 
 using namespace fv;
 
-void CfgTermInstVisitor::visitBranchInst(llvm::BranchInst &branch_inst) {
+void CfgTermInstVisitor::visitBranchInst(
+    llvm::BranchInst &branch_inst) {
 
     if (branch_inst.isConditional()) {
 
@@ -21,7 +22,8 @@ void CfgTermInstVisitor::visitBranchInst(llvm::BranchInst &branch_inst) {
     }
 }
 
-void CfgTermInstVisitor::visitSwitchInst(llvm::SwitchInst &switch_inst) {
+void CfgTermInstVisitor::visitSwitchInst(
+    llvm::SwitchInst &switch_inst) {
 
     branch_json["type"] = "switch";
     branch_json["dest"] = json::object();
@@ -32,15 +34,20 @@ void CfgTermInstVisitor::visitSwitchInst(llvm::SwitchInst &switch_inst) {
     for (auto switch_case : switch_inst.cases()) {
 
         auto *block_case = switch_case.getCaseSuccessor();
-        branch_json["dest"][GET_BLOCK_ID(block_case)] = switch_case.getCaseValue()->getSExtValue();
+        branch_json["dest"][GET_BLOCK_ID(block_case)] = 
+            switch_case.getCaseValue()->getSExtValue();
     }
 }
 
-void CfgTermInstVisitor::visitIndirectBrInst(llvm::IndirectBrInst &indir_br_inst) {
+void CfgTermInstVisitor::visitIndirectBrInst(
+    llvm::IndirectBrInst &indir_br_inst) {
 
-    Error::fatal<llvm::IndirectBrInst>(&indir_br_inst, "Indirect branch instructions currently not supported");
+    Error::fatal<llvm::IndirectBrInst>(&indir_br_inst, 
+        "Indirect branch instructions currently not supported");
 }
 
-void CfgTermInstVisitor::visitTerminatorInst(llvm::TerminatorInst &term_inst) { }
+void CfgTermInstVisitor::visitTerminatorInst(
+    llvm::TerminatorInst &term_inst) { }
 
-void CfgTermInstVisitor::visitInstruction(llvm::Instruction &I) { }
+void CfgTermInstVisitor::visitInstruction(
+    llvm::Instruction &I) { }
