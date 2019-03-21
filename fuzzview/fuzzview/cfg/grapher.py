@@ -9,15 +9,24 @@ class Grapher(object):
     def __init__(self, project_src_dir):
         self.project_src_dir = project_src_dir
         self.cfg_files = []
-        self.graphs = []
 
         self._find_cfg_files()
     
-    def generate_all_graphs(self):
+    def make_graphs(self, graph_type):
+
+        if graph_type == 'dot':
+            graph_class = DotFileGraph
+        elif graph_type == 'fuzzview':
+            graph_class = FVFileGraph
+        else:
+            print('Invalid graph type specified')
+            exit(1)
+
         for cfg_file in self.cfg_files:
             with open(cfg_file) as f:
                 module = json.load(f)
-                self._generate_file_graphs(module)
+
+                graph = graph_class(module)
 
     def _find_cfg_files(self):
         for dirpath, _, filenames in os.walk(self.project_src_dir):
@@ -25,15 +34,117 @@ class Grapher(object):
                 if filename.endswith(const.CFG_FILE_EXTENSION):
                     self.cfg_files.append(os.path.join(dirpath, filename))
 
-    def _sorted_funcs(self, funcs_obj):
+class FileGraph(object):
+
+    def __init__(self, module):
+        self.module = module
+
+        self._generate_graph()
+    
+    def _sorted_funcs(self):
         return sorted(
-            funcs_obj.values(), 
+            self.module['functions'].values(),
             key=lambda f: f['number']
         )
+    
+    def _block_id(self, func, block):
+        return (
+            self.module['path'] + '/' + 
+            self.module['name'] + '.' + 
+            func['name'] + '.' +
+            block['name']
+        )
 
-    def _generate_file_graphs(self, module):
-        for func in self._sorted_funcs(module['functions']):
-            func_graph = FuncGraph(module, func)
+class DotFileGraph(FileGraph):
+
+    def __init__(self, module):
+        super().__init__(module)
+
+    def _generate_graph(self):
+        ret = ''
+        ret += 'digraph G {\n'
+
+        for func in self._sorted_funcs():
+            ret += self._make_func_graph(func)
+
+        ret += '}\n'
+
+        return ret
+
+    def _make_call_info(self, call):
+        ret = ''
+
+        if call['type'] == 'direct':
+            ret += call['function']
+        else:
+            ret += 'indirect: '
+            ret += call['signature']
+        
+        return ret
+
+    def _make_label(self, block):
+        ret = ''
+        ret += block['name']
+        ret += '\n'
+
+        for call in block['calls']:
+            ret += self._make_call_info(call)
+            ret += '\n'
+
+        ret = ret.rstrip('\n')
+
+        return ret
+
+    def _make_block_node(self, func, block):
+        ret = ''
+        ret += '\t"'
+        ret += self._block_id(func, block)
+        ret += '" ['
+        ret += 'label="' + self._make_label(block) + '"'
+        ret += '];\n'
+        
+        for nxt_block_name in block['next']:
+            ret += '\t"'
+            ret += self._block_id(func, block)
+            ret += '" -> "'
+            ret += self._block_id(func, func['blocks'][nxt_block_name])
+            ret += '";\n'
+        
+        return ret
+
+    def _make_func_cluster(self, func):
+        ret = ''
+        ret += '\tsubgraph "cluster' + func['name'] + '" {\n'
+        ret += '\t\tlabel="' + func['name'] + '";\n'
+        
+        for block in func['blocks'].values():
+
+            ret += '\t\t"'
+            ret += self._block_id(func, block)
+            ret += '";\n'
+
+        ret += '\t}\n'
+        
+        return ret
+
+    def _make_func_graph(self, func):
+        ret = ''
+
+        for block in func['blocks'].values():
+            ret += self._make_block_node(func, block)
+
+        ret += self._make_func_cluster(func)
+
+        return ret
+
+class FVFileGraph(FileGraph):
+
+    def __init__(self, module):
+        super().__init__(module)
+
+    def _generate_graph(self):
+        for func in self._sorted_funcs():
+            FuncGraph(self.module, func)
 
 class FuncGraph(object):
 

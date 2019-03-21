@@ -3,7 +3,6 @@ import argparse
 from fuzzview.cfg.grapher import Grapher
 
 def main():
-
     parser = argparse.ArgumentParser(
         description='fuzzview: fuzzing visualizer')
 
@@ -13,4 +12,4 @@ def main():
     args = parser.parse_args()
 
     grapher = Grapher(args.project_src_dir)
-    grapher.generate_all_graphs()
+    grapher.make_graphs('dot')
