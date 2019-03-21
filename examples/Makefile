@@ -19,7 +19,7 @@ LDFLAGS += -Wno-unused-variable
 BIN = bin
 SANCOV = ../rt/sancov.c
 
-PROGS = simple_1
+PROGS = simple_1 loops_1
 ALL_FILES = $(PROGS) common subA/common subB/common
 ALL_FILES_BC = $(ALL_FILES:=.bc)
 
@@ -34,6 +34,9 @@ all: $(ALL_FILES_O) $(ALL_FILES_BC) $(PROGS)
 simple_1: simple_1.bc
 	# $(CC) $(LDFLAGS) $(SANCOV) $< common.bc subA/common.bc subB/common.bc -o $(BIN)/$@
 	$(CC) $(LDFLAGS) $< common.bc subA/common.bc subB/common.bc -o $(BIN)/$@
+
+loops_1: loops_1.bc
+	$(CC) $(LDFLAGS) $< -o $(BIN)/$@
 
 clean:
 	rm ./*.o || true

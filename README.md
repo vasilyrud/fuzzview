@@ -46,5 +46,5 @@ FV_NICE_JSON=1
 Running fuzzview:
 
 ```
-PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 fuzzview
+PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 fuzzview $FUZZVIEW_DIR/examples
 ```
