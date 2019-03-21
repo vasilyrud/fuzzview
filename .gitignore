@@ -3,6 +3,8 @@
 
 **/*.bc.tmp
 **/*.cfg.json
+**/*.cfg.dot
+**/*.cfg.pdf
 **/*.bc
 **/*.ll
 **/*.o

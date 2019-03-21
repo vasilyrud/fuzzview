@@ -31,7 +31,7 @@ class Grapher(object):
     def _find_cfg_files(self):
         for dirpath, _, filenames in os.walk(self.project_src_dir):
             for filename in filenames:
-                if filename.endswith(const.CFG_FILE_EXTENSION):
+                if filename.endswith(const.CFG_JSON_EXTENSION):
                     self.cfg_files.append(os.path.join(dirpath, filename))
 
 class FileGraph(object):
@@ -39,8 +39,6 @@ class FileGraph(object):
     def __init__(self, module):
         self.module = module
 
-        self._generate_graph()
-    
     def _sorted_funcs(self):
         return sorted(
             self.module['functions'].values(),
@@ -59,6 +57,19 @@ class DotFileGraph(FileGraph):
 
     def __init__(self, module):
         super().__init__(module)
+
+        self.graph = self._generate_graph()
+        self._save_graph()
+
+    def _save_graph(self):
+        save_filename = (
+            self.module['path'] + '/' + 
+            self.module['name'] + 
+            const.CFG_DOT_EXTENSION
+        )
+
+        with open(save_filename, 'w') as f:
+            f.write(self.graph)
 
     def _generate_graph(self):
         ret = ''
@@ -141,6 +152,8 @@ class FVFileGraph(FileGraph):
 
     def __init__(self, module):
         super().__init__(module)
+
+        self._generate_graph()
 
     def _generate_graph(self):
         for func in self._sorted_funcs():

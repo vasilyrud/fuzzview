@@ -39,9 +39,13 @@ clean:
 	rm ./*.o || true
 	rm ./*.bc || true
 	rm ./*.cfg.json || true
+	rm ./*.cfg.dot || true
+	rm ./*.cfg.pdf || true
 	
 	rm ./**/*.o || true
 	rm ./**/*.bc || true
 	rm ./**/*.cfg.json || true
+	rm ./**/*.cfg.dot || true
+	rm ./**/*.cfg.pdf || true
 	
 	rm -r bin/* || true
