@@ -1,5 +1,6 @@
 import os
 import json
+import subprocess
 from collections import deque
 
 import fuzzview.const as const
@@ -33,6 +34,10 @@ class Grapher(object):
             for filename in filenames:
                 if filename.endswith(const.CFG_JSON_EXTENSION):
                     self.cfg_files.append(os.path.join(dirpath, filename))
+        
+        if not self.cfg_files:
+            print('No .cfg.json files were found in ' + self.project_src_dir)
+            exit(1)
 
 class FileGraph(object):
 
@@ -59,17 +64,34 @@ class DotFileGraph(FileGraph):
         super().__init__(module)
 
         self.graph = self._generate_graph()
-        self._save_graph()
+        self._save_dot()
+        self._save_pdf()
 
-    def _save_graph(self):
-        save_filename = (
+    @property
+    def filename(self):
+        return self._filename()
+    
+    def _filename(self):
+        return (
             self.module['path'] + '/' + 
-            self.module['name'] + 
-            const.CFG_DOT_EXTENSION
+            self.module['name']
         )
 
-        with open(save_filename, 'w') as f:
+    def _save_dot(self):
+        dot_filename = self.filename + const.CFG_DOT_EXTENSION
+
+        with open(dot_filename, 'w') as f:
             f.write(self.graph)
+
+    def _save_pdf(self):
+        dot_filename = self.filename + const.CFG_DOT_EXTENSION
+        pdf_filename = self.filename + const.CFG_PDF_EXTENSION
+
+        cmd = 'dot -Tpdf ' + dot_filename + ' -o ' + pdf_filename
+        
+        subprocess.run(
+            cmd.split(' ')
+        )
 
     def _generate_graph(self):
         ret = ''

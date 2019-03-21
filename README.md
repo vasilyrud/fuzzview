@@ -1,6 +1,12 @@
 # fuzzview
 
+## Prerequisites
+
 Works with LLVM version 7.0.1
+
+Requires `dot` (graphviz)
+
+## To get started
 
 Set `LLVM_HOME` to the location of LLVM install:
 
