@@ -7,48 +7,21 @@ import subprocess
 import fuzzview.const as const
 import fuzzview.util as util
 
-PROGS_DIR = 'tests/progs'
-
-@pytest.fixture(scope='session')
-def compile_progs():
-    os.chdir(util.getenv(const.FV_ENV_VAR) + '/' + PROGS_DIR)
-
-    subprocess.run(['make', 'clean'])
-
-    new_env = os.environ.copy()
-    new_env[const.NICE_JSON_ENV_VAR] = '1'
-    proc_ret = subprocess.run(
-        ['make'],
-        env=new_env
-    )
-
-    return proc_ret
-
-def get_cfg(prog_name):
-    cfg_file = util.getenv(const.FV_ENV_VAR) + '/' + PROGS_DIR + '/' + prog_name + const.CFG_JSON_EXTENSION
-
-    with open(cfg_file) as f:
-        cfg = json.load(f)
-    
-    return cfg
-
-@pytest.fixture(scope='module')
-def branches1_cfg():
-    return get_cfg('branches1')
-
-@pytest.fixture(scope='module')
-def loops1_cfg():
-    return get_cfg('loops1')
-
 def test_compile(compile_progs):
-    assert compile_progs.returncode == 0
+    assert compile_progs[0].returncode == 0
 
-def test_module_name(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+def test_module_names(compile_progs, subA_common_cfg, subB_common_cfg):
+    cfgA = subA_common_cfg
+    cfgB = subB_common_cfg
+    progs_dir = compile_progs[1]
 
-    assert cfg['path'] == util.getenv(const.FV_ENV_VAR) + '/' + PROGS_DIR
-    assert cfg['name'] == 'branches1'
-    assert cfg['extension'] == '.c'
+    assert cfgA['path'] == util.getenv(const.FV_ENV_VAR) + '/' + progs_dir
+    assert cfgA['name'] == 'subA/common'
+    assert cfgA['extension'] == '.c'
+
+    assert cfgB['path'] == util.getenv(const.FV_ENV_VAR) + '/' + progs_dir
+    assert cfgB['name'] == 'subB/common'
+    assert cfgB['extension'] == '.c'
 
 def test_functions(compile_progs, branches1_cfg):
     cfg = branches1_cfg
