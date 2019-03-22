@@ -4,6 +4,7 @@ import json
 import pytest
 import subprocess
 
+from fuzzview.cfg.grapher import Grapher
 import fuzzview.const as const
 import fuzzview.util as util
 
@@ -13,14 +14,20 @@ PROGS_DIR = 'tests/progs'
 def compile_progs():
     os.chdir(util.getenv(const.FV_ENV_VAR) + '/' + PROGS_DIR)
 
+    # make clean
     subprocess.run(['make', 'clean'])
 
+    # make
     new_env = os.environ.copy()
     new_env[const.NICE_JSON_ENV_VAR] = '1'
     proc_ret = subprocess.run(
         ['make'],
         env=new_env
     )
+
+    # generate dot graph pdfs
+    grapher = Grapher(util.getenv(const.FV_ENV_VAR) + '/' + PROGS_DIR)
+    grapher.make_graphs('dot')
 
     return proc_ret, PROGS_DIR
 

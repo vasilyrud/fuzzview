@@ -7,11 +7,14 @@ class FVFileGraph(FileGraph):
     def __init__(self, module):
         super().__init__(module)
 
+        # Indexed by func names
+        self.func_graphs = {}
+
         self._generate_graph()
 
     def _generate_graph(self):
         for func in self._sorted_funcs():
-            FuncGraph(self.module, func)
+            self.func_graphs[func['name']] = FuncGraph(self.module, func)
 
 class FuncGraph(object):
 
@@ -29,7 +32,7 @@ class FuncGraph(object):
 
         # Print nodes
         for node in self.nodes.values():
-            node_width, node_height = node.get_dimensions()
+            node_width, node_height = node.dimensions
 
             print(node.func['name'] + ':' + node.block['name'], end=', ')
             print('shortest_depth: ' + str(node.shortest_depth), end=', ')
@@ -137,7 +140,11 @@ class GraphNode(object):
         self.shortest_depth = None
         self.longest_depth  = 0
 
-    def get_dimensions(self):
+    @property
+    def dimensions(self):
+        return self._dimensions()
+
+    def _dimensions(self):
         max_num_edges = max(
             len(self.block['prev']), 
             len(self.block['next'])
@@ -154,7 +161,7 @@ class GraphNode(object):
     def __str__(self):
         ret_str = ''
 
-        block_width, block_height = self.get_dimensions()
+        block_width, block_height = self.dimensions
         grid = [['.' for j in range(block_width)] for i in range(block_height)]
 
         for i in range(len(grid)):
