@@ -25,8 +25,8 @@ To compile LLVM pass:
 ```
 cd $FUZZVIEW_DIR/pass
 mkdir build
-cd $FUZZVIEW_DIR/pass/build
-CC=$LLVM_HOME/bin/clang CXX=$LLVM_HOME/bin/clang++ cmake ..
+cd build
+cmake ..
 make
 ```
 
