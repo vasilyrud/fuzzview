@@ -5,25 +5,30 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+
 int A() {
     return 10;
 }
+
 
 int B() {
     return 11;
 }
 
+
 int C() {
     return 12;
 }
+
 
 int D() {
     return 13;
 }
 
+
 int main() {
-    
-    // Nested SCCs
+
+    // Test nested SCCs
     while (1) {
         A();
         while (1) {
@@ -32,7 +37,7 @@ int main() {
         if (C()) break;
     }
 
-    // Two back edges to start
+    // Test two back edges to start
     z:
     if (A()) {
         if (B()) {
@@ -44,7 +49,7 @@ int main() {
         }
     }
 
-    // irreducible SCC
+    // Test irreducible SCC
     if (A()) {
         x:
         if (B()) {

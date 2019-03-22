@@ -24,17 +24,21 @@ int D() {
 void A(int a) {
     int (*b)(void) = &B;
 
+    // Test conditional branches
     if (a == 4) {
+        // Test indirect function calls
         b();
     } else {
         B();
     }
 
+    // Test switch statements
     switch (a) {
         case 7:
             C();
             break;
         default:
+            // Test multiple calls per block
             D();
             D();
             break;
