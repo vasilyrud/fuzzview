@@ -13,3 +13,4 @@ def main():
 
     grapher = Grapher(args.project_src_dir)
     grapher.make_graphs('dot')
+    grapher.make_graphs('fuzzview')
