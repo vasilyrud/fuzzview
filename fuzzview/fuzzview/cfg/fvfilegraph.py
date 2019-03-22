@@ -1,4 +1,5 @@
 from collections import deque
+import math
 
 from fuzzview.cfg.filegraph import FileGraph
 
@@ -27,8 +28,7 @@ class FuncGraph(object):
         
         self._generate_nodes()
         self._set_back_edges()
-        self._set_shortest_depths()
-        self._set_longest_depths()
+        self._set_depths()
 
         # Print nodes
         for node in self.nodes.values():
@@ -82,8 +82,7 @@ class FuncGraph(object):
             key=lambda b_name: self.func['blocks'][b_name]['number']
         )
 
-    def _set_shortest_depths(self):
-        seen = set()
+    def _set_depths(self):
         q = deque()
         init_depth = 0
         q.append((init_depth, self.first_block))
@@ -96,34 +95,12 @@ class FuncGraph(object):
             cur_name  = cur_block['name']
             cur_node  = self.nodes[cur_name]
 
-            # Save the depth in the node
-            cur_node.shortest_depth = cur_depth
-
-            for next_block_name in self._sorted_forward_next(cur_block):
-                if next_block_name in seen:
-                    continue
-
-                seen.add(next_block_name)
-                next_block = self.func['blocks'][next_block_name]
-
-                q.append((cur_depth + 1, next_block))
-
-    def _set_longest_depths(self):
-        q = deque()
-        init_depth = 0
-        q.append((init_depth, self.first_block))
-
-        while q:
-            cur = q.popleft()
-
-            cur_depth = cur[0]
-            cur_block = cur[1]
-            cur_name  = cur_block['name']
-            cur_node  = self.nodes[cur_name]
-
-            if cur_depth >= cur_node.longest_depth:
+            if cur_depth < cur_node.shortest_depth:
+                cur_node.shortest_depth = cur_depth
+            
+            if cur_depth > cur_node.longest_depth:
                 cur_node.longest_depth = cur_depth
-            
+
             for next_block_name in self._sorted_forward_next(cur_block):
                 next_block = self.func['blocks'][next_block_name]
                 q.append((cur_depth + 1, next_block))
@@ -137,7 +114,7 @@ class GraphNode(object):
 
         # Filled in by FuncGraph
         self.back_edges = set()
-        self.shortest_depth = None
+        self.shortest_depth = math.inf
         self.longest_depth  = 0
 
     @property
