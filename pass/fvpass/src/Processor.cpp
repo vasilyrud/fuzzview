@@ -15,6 +15,21 @@ bool Processor::hasFuncDef(llvm::Module &M) {
     return F_iter != M.end();
 }
 
+void Processor::assignBlockIds(llvm::Function &F) {
+
+    uint32_t block_counter = 0;
+    for (auto &B : F) {
+
+        Metadata::set(
+            B.getTerminator(), 
+            METADATA_BLOCK_ID, 
+            std::to_string(block_counter)
+        );
+
+        block_counter++;
+    }
+}
+
 void Processor::processModule(llvm::Module &M) {
 
     uint32_t func_counter;
@@ -33,22 +48,12 @@ void Processor::processModule(llvm::Module &M) {
         // they don't have basic blocks.
         if (F.isDeclaration()) continue;
 
-        cfg_builder.addFunction(F, func_counter);
-        
         // First, assign our own "ids" to basic blocks.
-        block_counter = 0;
-        for (auto &B : F) {
-
-            Metadata::set(
-                B.getTerminator(), 
-                METADATA_BLOCK_ID, 
-                std::to_string(block_counter)
-            );
-
-            block_counter++;
-        }
+        assignBlockIds(F);
 
         // Then, actually process them.
+        cfg_builder.addFunction(F, func_counter);
+
         block_counter = 0;
         for (auto &B : F) {
 

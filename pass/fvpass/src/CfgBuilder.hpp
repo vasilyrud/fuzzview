@@ -8,6 +8,7 @@
 #include "llvm/IR/CFG.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/InstVisitor.h"
+#include "llvm/Analysis/CFG.h"
 #include "llvm/Support/Path.h"
 
 #include "nlohmann/json.hpp"
@@ -43,6 +44,7 @@ class CfgBuilder {
 
     json file_json;
 
+    void addBackEdges(llvm::Function &F, json &back_edges_json);
     void addCalls(llvm::BasicBlock &B, json &calls_json);
     void addCall(llvm::CallInst *call_inst, json &calls_json);
     bool ignoredFunc(std::string &func_name);

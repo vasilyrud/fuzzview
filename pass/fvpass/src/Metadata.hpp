@@ -27,7 +27,7 @@ class Metadata {
     }
 
     static std::string get(
-        llvm::Instruction *item, 
+        const llvm::Instruction *item, 
         const std::string &metadata_key
     ) {
 

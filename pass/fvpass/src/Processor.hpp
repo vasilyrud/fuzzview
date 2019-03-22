@@ -20,6 +20,7 @@ class Processor {
     CfgBuilder cfg_builder;
 
     bool hasFuncDef(llvm::Module &M);
+    void assignBlockIds(llvm::Function &F);
 
 };
 

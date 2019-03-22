@@ -129,7 +129,31 @@ void CfgBuilder::addFunction(llvm::Function &F, uint32_t func_number) {
     func_json["name"] = func_name;
     func_json["blocks"] = json::object();
 
+    json back_edges = json::object();
+    addBackEdges(F, back_edges);
+    func_json["back_edges"] = back_edges;
+
     file_json["functions"][func_name] = func_json;
+}
+
+void CfgBuilder::addBackEdges(llvm::Function &F, json &back_edges_json) {
+
+    llvm::SmallVector<
+        std::pair<
+            const llvm::BasicBlock *, 
+            const llvm::BasicBlock *
+        >, 4
+    > back_edges;
+
+    llvm::FindFunctionBackedges(F, back_edges);
+
+    for (auto &back_edge : back_edges) {
+        
+        auto from_block = Metadata::get(back_edge.first->getTerminator(), METADATA_BLOCK_ID);
+        auto to_block   = Metadata::get(back_edge.second->getTerminator(), METADATA_BLOCK_ID);
+        
+        back_edges_json[from_block] = to_block;
+    }
 }
 
 void CfgBuilder::addBlock(llvm::BasicBlock &B, uint32_t block_number) {

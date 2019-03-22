@@ -29,7 +29,7 @@ class Error {
   public:
 
     template<typename LLVM_TYPE>
-    static void fatal(LLVM_TYPE *llvm_var, std::string msg) {
+    static void fatal(const LLVM_TYPE *llvm_var, std::string msg) {
         exitStart();
         exitMsg(msg);
 
