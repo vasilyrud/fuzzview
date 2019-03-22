@@ -9,11 +9,11 @@
 **/*.ll
 **/*.o
 
-examples/bin/*
-pass/fvpass/test/samples/bin/*
+tests/progs/bin/*
 
 pass/build
 
 __pycache__/
+.pytest_cache/
 
 !*.gitkeep

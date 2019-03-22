@@ -30,14 +30,14 @@ CC=$LLVM_HOME/bin/clang CXX=$LLVM_HOME/bin/clang++ cmake ..
 make
 ```
 
-To compile examples with custom clang:
+To compile test progs with custom clang:
 
 ```
-cd $FUZZVIEW_DIR/examples
-make CC=$LLVM_HOME/bin/clang
+cd $FUZZVIEW_DIR/tests/progs
+make
 ```
 
-To make `.cfg.json` files readable:
+To make `.cfg.json` files readable, set before compiling:
 
 ```
 FV_NICE_JSON=1 
@@ -46,7 +46,7 @@ FV_NICE_JSON=1
 Running fuzzview:
 
 ```
-PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 fuzzview $FUZZVIEW_DIR/examples
+PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 fuzzview $FUZZVIEW_DIR/tests/progs
 ```
 
 Running tests:
