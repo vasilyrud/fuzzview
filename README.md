@@ -48,3 +48,9 @@ Running fuzzview:
 ```
 PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 fuzzview $FUZZVIEW_DIR/examples
 ```
+
+Running tests:
+
+```
+PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 -m pytest -x
+```
