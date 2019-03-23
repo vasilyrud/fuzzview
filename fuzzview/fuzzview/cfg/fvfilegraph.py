@@ -30,8 +30,6 @@ class FuncGraph(object):
         self.rows = []
 
         self._generate_nodes()
-        self._set_back_edges()
-        self._set_depths()
         self._generate_rows()
 
         # print(self.func['name'])
@@ -106,6 +104,10 @@ class FuncGraph(object):
     def _generate_nodes(self):
         for block in self.func['blocks'].values():
             self.nodes[block['name']] = GraphNode(self.module, self.func, block)
+
+        self._set_back_edges()
+        self._set_depths()
+        self._set_prev_next()
     
     def _set_back_edges(self):
         for src, dest in self.func['back_edges'].items():
@@ -153,6 +155,21 @@ class FuncGraph(object):
             for next_block_name in self._sorted_forward_next(cur_block):
                 next_block = self.func['blocks'][next_block_name]
                 q.append((cur_depth + 1, next_block))
+
+    def _sorted_node_names(self, node_names):
+        return sorted(
+            node_names,
+            key=lambda name: self.nodes[name].block['number']
+        )
+
+    def _set_prev_next(self):
+        for node in self.nodes.values():
+
+            for next_block_name in self._sorted_node_names(node.block['next']):
+                node.next_nodes.append(self.nodes[next_block_name])
+            
+            for prev_block_name in self._sorted_node_names(node.block['prev']):
+                node.prev_nodes.append(self.nodes[prev_block_name])
 
     def _generate_rows(self):
         self.rows = [GraphRow(depth) for depth in range(self._num_rows())]
@@ -231,6 +248,9 @@ class GraphNode(object):
         self.back_edges = set()
         self.shortest_depth = math.inf
         self.longest_depth  = 0
+        # Sorted by block number
+        self.next_nodes = []
+        self.prev_nodes = []
 
     @property
     def dimensions(self):
