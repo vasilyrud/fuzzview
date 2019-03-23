@@ -24,12 +24,15 @@ class FuncGraph(object):
         self.module = module
         self.func = func
 
-        # Indexed by block names
+        # Nodes indexed by block names
         self.nodes = {}
-        
+        # Rows of nodes indexed by depth
+        self.rows = []
+
         self._generate_nodes()
         self._set_back_edges()
         self._set_depths()
+        self._generate_rows()
 
         # Print nodes
         for node in self.nodes.values():
@@ -40,34 +43,29 @@ class FuncGraph(object):
             # print(node)
             # print('')
             continue
-        
-        self.rows = [[] for _ in range(self._num_rows())]
-        for node in self._sorted_nodes():
-            self.rows[node.longest_depth].append(node)
-        
+
         # print([len(row) for row in self.rows])
         # print(self.width, self.height)
         print(self.func['name'])
         print(self)
+        print(self.str_func())
 
     def __str__(self):
         ret = ''
-
+        ret += self.func['name']
+        ret += '\n'
         for row in self.rows:
-            # print row
-            for line in range(self._row_height(row)):
-                line_str = ''
-                for node in row:
-                    line_str += node.str_line(line)
-                    line_str += const.EMPTY_CHAR
-                line_str = line_str[:-1]
-
-                assert len(line_str) == self._row_width(row)
-
-                ret += line_str
-                ret += '\n'
+            ret += ' '
+            ret += str(row)
             ret += '\n'
-        
+
+        return ret[:-1]
+
+    def str_func(self):
+        ret = ''
+        for row in self.rows:
+            ret += row.str_nodes()
+
         return ret
 
     @property
@@ -86,24 +84,6 @@ class FuncGraph(object):
         height = sum(
             (self._row_height(row) for row in self.rows)
         ) + len(self.rows) - 1
-
-        assert height > 0
-        return height
-
-    def _row_width(self, row):
-        # Sum of all node widths + spaces
-        width = sum(
-            (node.width for node in row)
-        ) + len(row) - 1
-
-        assert width > 0
-        return width
-
-    def _row_height(self, row):
-        # Max height of nodes in the row
-        height = max(
-            (node.height for node in row)
-        )
 
         assert height > 0
         return height
@@ -186,6 +166,69 @@ class FuncGraph(object):
                 next_block = self.func['blocks'][next_block_name]
                 q.append((cur_depth + 1, next_block))
 
+    def _generate_rows(self):
+        self.rows = [GraphRow(depth) for depth in range(self._num_rows())]
+
+        for node in self._sorted_nodes():
+            depth = node.longest_depth
+            row = self.rows[depth]
+            row.nodes.append(node)
+
+class GraphRow(object):
+
+    def __init__(self, depth):
+        self.depth = depth
+        self.nodes = []
+
+    def __str__(self):
+        ret = ''
+        for node in self.nodes:
+            ret += str(node)
+            ret += ' '
+        
+        return ret[:-1]
+
+    @property
+    def width(self):
+        # Sum of all node widths + spaces
+        width = sum(
+            (node.width for node in self.nodes)
+        ) + len(self.nodes) - 1
+
+        assert width > 0
+        return width
+
+    @property
+    def height(self):
+        # Max height of nodes in the row
+        height = max(
+            (node.height for node in self.nodes)
+        )
+
+        assert height > 0
+        return height
+    
+    def str_nodes(self):
+        ret = ''
+
+        for line in range(self.height):
+            ret += self._str_line(line)
+            ret += '\n'
+        ret += '\n'
+        
+        return ret
+    
+    def _str_line(self, line):
+        ret = ''
+
+        for node in self.nodes:
+            ret += node.str_line(line)
+            ret += const.EMPTY_CHAR
+        ret = ret[:-1]
+        assert len(ret) == self.width
+        
+        return ret
+
 class GraphNode(object):
 
     def __init__(self, module, func, block):
@@ -220,9 +263,6 @@ class GraphNode(object):
 
         assert height > 0
         return height
-
-    def __repr__(self):
-        return str(self)
 
     def __str__(self):
         ret_str = ''
