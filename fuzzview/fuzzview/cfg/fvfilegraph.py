@@ -45,7 +45,47 @@ class FuncGraph(object):
         for node in self._sorted_nodes():
             self.rows[node.longest_depth].append(node)
         
-        print([len(row) for row in self.rows])
+        # print([len(row) for row in self.rows])
+
+        print(self.width, self.height)
+
+    @property
+    def width(self):
+        # Max width of all rows
+        width = max(
+            (self._row_width(row) for row in self.rows)
+        )
+
+        assert width > 0
+        return width
+    
+    @property
+    def height(self):
+        # Sum of all row heights + spaces
+        height = sum(
+            (self._row_height(row) for row in self.rows)
+        ) + len(self.rows) - 1
+
+        assert height > 0
+        return height
+
+    def _row_width(self, row):
+        # Sum of all node widths + spaces
+        width = sum(
+            (node.width for node in row)
+        ) + len(row) - 1
+
+        assert width > 0
+        return width
+
+    def _row_height(self, row):
+        # Max height of nodes in the row
+        height = max(
+            (node.height for node in row)
+        )
+
+        assert height > 0
+        return height
 
     @property
     def first_block(self):
@@ -138,19 +178,27 @@ class GraphNode(object):
         self.longest_depth  = 0
 
     @property
-    def dimensions(self):
+    def width(self):
         max_num_edges = max(
             len(self.block['prev']), 
             len(self.block['next'])
         )
-        block_width = max(1, max_num_edges)
+        
+        width = max(1, max_num_edges)
+        
+        assert width  > 0
+        return width
 
-        block_height = len(self.block['calls']) + 1
+    @property
+    def height(self):
+        height = len(self.block['calls']) + 1
 
-        assert block_width  > 0
-        assert block_height > 0
+        assert height > 0
+        return height
 
-        return block_width, block_height
+    @property
+    def dimensions(self):
+        return self.width, self.height
 
     def __str__(self):
         ret_str = ''
