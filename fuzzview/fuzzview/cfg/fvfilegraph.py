@@ -34,18 +34,21 @@ class FuncGraph(object):
         for node in self.nodes.values():
             node_width, node_height = node.dimensions
 
-            print(node.func['name'] + ':' + node.block['name'], end=', ')
-            print('shortest_depth: ' + str(node.shortest_depth), end=', ')
-            print('longest_depth: ' + str(node.longest_depth), end=', ')
+            # print(node.func['name'] + ':' + node.block['name'], end=', ')
+            # print('shortest_depth: ' + str(node.shortest_depth), end=', ')
+            # print('longest_depth: ' + str(node.longest_depth), end=', ')
             # print(str(node_width) + 'x' + str(node_height))
             # print(node)
-            print('')
+            # print('')
+        
+        self.rows = [[] for _ in range(self._num_rows())]
+        for node in self._sorted_nodes():
+            self.rows[node.longest_depth].append(node)
+        
+        print([len(row) for row in self.rows])
 
     @property
     def first_block(self):
-        return self._first_block()
-
-    def _first_block(self):
         first_block = min(
             self.func['blocks'].values(),
             key=lambda f: f['number']
@@ -53,6 +56,23 @@ class FuncGraph(object):
 
         assert not first_block['prev']
         return first_block
+
+    def _sorted_nodes(self):
+        return sorted(
+            self.nodes.values(),
+            key=lambda node: node.block['number']
+        )
+
+    def _num_rows(self):
+        # Largest longest_depth
+        num_rows = max(map(
+            lambda node: node.longest_depth, 
+            self.nodes.values()
+        ))
+
+        # `+ 1` because num_rows is used as length of array
+        # into which all longest_depths should fit.
+        return num_rows + 1
 
     def _generate_nodes(self):
         for block in self.func['blocks'].values():
@@ -119,9 +139,6 @@ class GraphNode(object):
 
     @property
     def dimensions(self):
-        return self._dimensions()
-
-    def _dimensions(self):
         max_num_edges = max(
             len(self.block['prev']), 
             len(self.block['next'])

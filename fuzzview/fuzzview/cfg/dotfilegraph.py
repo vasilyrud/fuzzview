@@ -14,9 +14,6 @@ class DotFileGraph(FileGraph):
 
     @property
     def filename(self):
-        return self._filename()
-    
-    def _filename(self):
         return (
             self.module['path'] + '/' + 
             self.module['name']
