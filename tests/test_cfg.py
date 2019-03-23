@@ -44,8 +44,14 @@ def test_dimensions(compile_progs, branches1_cfg):
     cfg = branches1_cfg
     graph = FVFileGraph(cfg)
 
+    assert graph.func_graphs['D'].nodes['0'].only_node_dimensions == (1, 1)
     assert graph.func_graphs['D'].nodes['0'].dimensions == (1, 1)
 
-    assert graph.func_graphs['A'].nodes['1'].dimensions == (1, 2)
-    assert graph.func_graphs['A'].nodes['3'].dimensions == (2, 1)
-    assert graph.func_graphs['A'].nodes['5'].dimensions == (1, 3)
+    assert graph.func_graphs['A'].nodes['1'].only_node_dimensions == (1, 1)
+    assert graph.func_graphs['A'].nodes['1'].dimensions == (2, 3)
+
+    assert graph.func_graphs['A'].nodes['3'].only_node_dimensions == (2, 1)
+    assert graph.func_graphs['A'].nodes['3'].dimensions == (2, 3)
+
+    assert graph.func_graphs['A'].nodes['5'].only_node_dimensions == (1, 2)
+    assert graph.func_graphs['A'].nodes['5'].dimensions == (2, 4)

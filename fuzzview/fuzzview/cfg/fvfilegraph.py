@@ -34,21 +34,9 @@ class FuncGraph(object):
         self._set_depths()
         self._generate_rows()
 
-        # Print nodes
-        for node in self.nodes.values():
-            # print(node.func['name'] + ':' + node.block['name'], end=', ')
-            # print('shortest_depth: ' + str(node.shortest_depth), end=', ')
-            # print('longest_depth: ' + str(node.longest_depth), end=', ')
-            # print(str(node.width) + 'x' + str(node.height))
-            # print(node)
-            # print('')
-            continue
-
-        # print([len(row) for row in self.rows])
-        # print(self.width, self.height)
-        print(self.func['name'])
-        print(self)
-        print(self.str_func())
+        # print(self.func['name'])
+        # print(self)
+        # print(self.str_func())
 
     def __str__(self):
         ret = ''
@@ -111,7 +99,7 @@ class FuncGraph(object):
             self.nodes.values()
         ))
 
-        # `+ 1` because num_rows is used as length of array
+        # `+1` because num_rows is used as length of array
         # into which all longest_depths should fit.
         return num_rows + 1
 
@@ -236,6 +224,9 @@ class GraphNode(object):
         self.func = func
         self.block = block
 
+        self.term_str = []
+        self._generate_term_str()
+
         # Filled in by FuncGraph
         self.back_edges = set()
         self.shortest_depth = math.inf
@@ -247,19 +238,44 @@ class GraphNode(object):
 
     @property
     def width(self):
-        max_num_edges = max(
-            len(self.block['prev']), 
-            len(self.block['next'])
-        )
-        
-        width = max(1, max_num_edges)
-        
-        assert width  > 0
+        width = self.only_node_width
+
+        if self.block['calls']:
+            width += 1
+
         return width
 
     @property
     def height(self):
-        height = len(self.block['calls']) + 1
+        height = self.only_node_height
+
+        if self.block['prev']:
+            height += 1
+        
+        if self.block['next']:
+            height += 1
+
+        return height
+
+    @property
+    def only_node_dimensions(self):
+        return self.only_node_width, self.only_node_height
+    
+    @property
+    def only_node_width(self):
+        max_num_edges = max(
+            len(self.block['prev']), 
+            len(self.block['next'])
+        )
+        width = max(1, max_num_edges)
+
+        assert width > 0
+        return width
+    
+    @property
+    def only_node_height(self):
+        num_calls = len(self.block['calls'])
+        height = max(1, num_calls)
 
         assert height > 0
         return height
@@ -267,14 +283,42 @@ class GraphNode(object):
     def __str__(self):
         ret_str = ''
 
-        ret_str += str(self.width)
+        ret_str += str(self.only_node_width)
         ret_str += 'x'
-        ret_str += str(self.height)
+        ret_str += str(self.only_node_height)
         
         return ret_str
-    
+
     def str_line(self, line):
         if line >= self.height:
             return const.EMPTY_CHAR * self.width
         else:
-            return const.NODE_CHAR * self.width
+            return self.term_str[line]
+
+    def _generate_term_str(self):
+
+        if self.block['prev']:
+            prev_edges = ''
+            for prev_block_name in self.block['prev']:
+                prev_edges += const.IN_EDGE_CHAR
+            prev_edges = prev_edges.ljust(self.width, ' ')
+            self.term_str.append(prev_edges)
+
+        if self.block['calls']:
+            for call_func_name in self.block['calls']:
+                node_line = ''
+                node_line += const.NODE_CHAR * self.only_node_width
+                node_line += const.CALL_CHAR
+                self.term_str.append(node_line)
+        else:
+            node_line = ''
+            node_line += const.NODE_CHAR * self.only_node_width
+            self.term_str.append(node_line)
+
+        if self.block['next']:
+            next_edges = ''
+            for prev_block_name in self.block['next']:
+                next_edges += const.OUT_EDGE_CHAR
+            next_edges = next_edges.ljust(self.width, ' ')
+            self.term_str.append(next_edges)
+

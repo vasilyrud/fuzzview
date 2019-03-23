@@ -9,3 +9,6 @@ NICE_JSON_ENV_VAR = 'FV_NICE_JSON'
 
 NODE_CHAR  = '#'
 EMPTY_CHAR = ' '
+CALL_CHAR  = '-'
+IN_EDGE_CHAR  = '.'
+OUT_EDGE_CHAR = '\''
