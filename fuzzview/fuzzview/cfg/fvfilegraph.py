@@ -2,6 +2,7 @@ from collections import deque
 import math
 
 from fuzzview.cfg.filegraph import FileGraph
+import fuzzview.const as const
 
 class FVFileGraph(FileGraph):
 
@@ -32,22 +33,42 @@ class FuncGraph(object):
 
         # Print nodes
         for node in self.nodes.values():
-            node_width, node_height = node.dimensions
-
             # print(node.func['name'] + ':' + node.block['name'], end=', ')
             # print('shortest_depth: ' + str(node.shortest_depth), end=', ')
             # print('longest_depth: ' + str(node.longest_depth), end=', ')
-            # print(str(node_width) + 'x' + str(node_height))
+            # print(str(node.width) + 'x' + str(node.height))
             # print(node)
             # print('')
+            continue
         
         self.rows = [[] for _ in range(self._num_rows())]
         for node in self._sorted_nodes():
             self.rows[node.longest_depth].append(node)
         
         # print([len(row) for row in self.rows])
+        # print(self.width, self.height)
+        print(self.func['name'])
+        print(self)
 
-        print(self.width, self.height)
+    def __str__(self):
+        ret = ''
+
+        for row in self.rows:
+            # print row
+            for line in range(self._row_height(row)):
+                line_str = ''
+                for node in row:
+                    line_str += node.str_line(line)
+                    line_str += const.EMPTY_CHAR
+                line_str = line_str[:-1]
+
+                assert len(line_str) == self._row_width(row)
+
+                ret += line_str
+                ret += '\n'
+            ret += '\n'
+        
+        return ret
 
     @property
     def width(self):
@@ -178,6 +199,10 @@ class GraphNode(object):
         self.longest_depth  = 0
 
     @property
+    def dimensions(self):
+        return self.width, self.height
+
+    @property
     def width(self):
         max_num_edges = max(
             len(self.block['prev']), 
@@ -196,19 +221,20 @@ class GraphNode(object):
         assert height > 0
         return height
 
-    @property
-    def dimensions(self):
-        return self.width, self.height
+    def __repr__(self):
+        return str(self)
 
     def __str__(self):
         ret_str = ''
 
-        block_width, block_height = self.dimensions
-        grid = [['.' for j in range(block_width)] for i in range(block_height)]
-
-        for i in range(len(grid)):
-            for j in range(len(grid[0])):
-                ret_str += '#'
-            ret_str += '\n'
+        ret_str += str(self.width)
+        ret_str += 'x'
+        ret_str += str(self.height)
         
         return ret_str
+    
+    def str_line(self, line):
+        if line >= self.height:
+            return const.EMPTY_CHAR * self.width
+        else:
+            return const.NODE_CHAR * self.width
