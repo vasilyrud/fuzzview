@@ -4,6 +4,13 @@ class FileGraph(object):
     def __init__(self, module):
         self.module = module
 
+    @property
+    def filename(self):
+        return (
+            self.module['path'] + '/' + 
+            self.module['name']
+        )
+
     def _sorted_funcs(self):
         return sorted(
             self.module['functions'].values(),

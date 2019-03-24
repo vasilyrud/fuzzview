@@ -5,6 +5,7 @@
 **/*.cfg.json
 **/*.cfg.dot
 **/*.cfg.pdf
+**/*.cfg.png
 **/*.bc
 **/*.ll
 **/*.o

@@ -13,6 +13,7 @@ def generate_fv_graphs(grapher):
     fv_graphs = grapher.make_graphs(FVFileGraph)
     for fv_graph in fv_graphs:
         fv_graph.terminal_print()
+        fv_graph.save()
 
 def main():
     parser = argparse.ArgumentParser(

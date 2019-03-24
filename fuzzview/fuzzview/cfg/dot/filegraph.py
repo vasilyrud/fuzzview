@@ -9,13 +9,6 @@ class DotFileGraph(FileGraph):
         super().__init__(module)
 
         self.graph = self._generate_graph()
-
-    @property
-    def filename(self):
-        return (
-            self.module['path'] + '/' + 
-            self.module['name']
-        )
     
     def save(self):
         self._save_dot()

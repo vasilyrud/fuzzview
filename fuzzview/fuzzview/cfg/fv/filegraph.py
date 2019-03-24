@@ -1,3 +1,5 @@
+from PIL import Image
+
 from fuzzview.cfg.filegraph import FileGraph
 from fuzzview.cfg.fv.funcgraph import FuncGraph
 from fuzzview.cfg.fv.pixel import EmptyPixel
@@ -11,6 +13,10 @@ class FVFileGraph(FileGraph):
         # In number order
         self.func_graphs = []
         self._generate_func_graphs()
+
+    @property
+    def dimensions(self):
+        return self.width, self.height
 
     @property
     def width(self):
@@ -49,6 +55,13 @@ class FVFileGraph(FileGraph):
                 count += 1
             print('')
         print('')
+
+    def save(self):
+        pixels = [pixel.rgb for pixel in self.pixels()]
+
+        image = Image.new('RGB', self.dimensions)
+        image.putdata(pixels)
+        image.save(self.filename + const.CFG_PNG_EXTENSION, format='PNG')
 
     def pixels(self):
         all_pixels = []
