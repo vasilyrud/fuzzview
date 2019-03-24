@@ -5,6 +5,7 @@ import pytest
 import subprocess
 
 from fuzzview.cfg.grapher import Grapher
+from fuzzview.cfg.dot.filegraph import DotFileGraph
 import fuzzview.const as const
 import fuzzview.util as util
 
@@ -27,7 +28,7 @@ def compile_progs():
 
     # generate dot graph pdfs
     grapher = Grapher(util.getenv(const.FV_ENV_VAR) + '/' + PROGS_DIR)
-    grapher.make_graphs('dot')
+    grapher.save_graphs(DotFileGraph)
 
     return proc_ret, PROGS_DIR
 

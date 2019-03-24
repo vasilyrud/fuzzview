@@ -4,6 +4,12 @@ class FileGraph(object):
     def __init__(self, module):
         self.module = module
 
+    def save(self):
+        pass
+    
+    def terminal_print(self):
+        pass
+
     @property
     def filename(self):
         return (
