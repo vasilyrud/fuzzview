@@ -2,8 +2,8 @@ import os
 import json
 
 import fuzzview.const as const
-from fuzzview.cfg.fvfilegraph import FVFileGraph
-from fuzzview.cfg.dotfilegraph import DotFileGraph
+from fuzzview.cfg.fv.filegraph import FVFileGraph
+from fuzzview.cfg.dot.filegraph import DotFileGraph
 
 class Grapher(object):
 
