@@ -92,12 +92,12 @@ class GraphNode(object):
         if self.block['calls']:
             for call_func_name in self.block['calls']:
                 node_line = []
-                node_line += [NodePixel(self.block)] * self.only_node_width
+                node_line += [NodePixel(self.block, self.longest_depth)] * self.only_node_width
                 node_line += [CallPixel(self.block, call_func_name)]
                 self.pixels.append(node_line)
         else:
             node_line = []
-            node_line += [NodePixel(self.block)] * self.only_node_width
+            node_line += [NodePixel(self.block, self.longest_depth)] * self.only_node_width
             self.pixels.append(node_line)
 
 
