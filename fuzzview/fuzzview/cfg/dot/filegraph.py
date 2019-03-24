@@ -9,8 +9,6 @@ class DotFileGraph(FileGraph):
         super().__init__(module)
 
         self.graph = self._generate_graph()
-        self._save_dot()
-        self._save_pdf()
 
     @property
     def filename(self):
@@ -18,6 +16,10 @@ class DotFileGraph(FileGraph):
             self.module['path'] + '/' + 
             self.module['name']
         )
+    
+    def save(self):
+        self._save_dot()
+        self._save_pdf()
 
     def _save_dot(self):
         dot_filename = self.filename + const.CFG_DOT_EXTENSION

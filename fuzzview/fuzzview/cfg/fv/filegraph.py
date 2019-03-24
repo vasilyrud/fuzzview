@@ -12,8 +12,6 @@ class FVFileGraph(FileGraph):
         self.func_graphs = []
         self._generate_func_graphs()
 
-        self.pixels()
-
     @property
     def width(self):
         # Sum of widths of all functions
@@ -34,10 +32,6 @@ class FVFileGraph(FileGraph):
         assert height > 0
         return height
 
-    def _generate_func_graphs(self):
-        for func in self._sorted_funcs():
-            self.func_graphs.append(FuncGraph(self.module, func))
-
     def get_func_graph(self, func_name):
         for func_graph in self.func_graphs:
             if func_graph.func['name'] == func_name:
@@ -45,19 +39,24 @@ class FVFileGraph(FileGraph):
 
         raise KeyError(func_name + ' not found in func_graphs')
 
+    def terminal_print(self):
+        pixels = self.pixels()
+
+        count = 0
+        for i in range(self.height):
+            for j in range(self.width):
+                print(pixels[count], end='')
+                count += 1
+            print('')
+        print('')
+
     def pixels(self):
         all_pixels = []
 
         for line in range(self.height):
             all_pixels += self.get_line(line)
 
-        count = 0
-        for i in range(self.height):
-            for j in range(self.width):
-                print(all_pixels[count], end='')
-                count += 1
-            print('')
-        print('')
+        return all_pixels
     
     def get_line(self, line):
         pixels = []
@@ -67,3 +66,7 @@ class FVFileGraph(FileGraph):
             pixels += [EmptyPixel()]
         
         return pixels[:-1]
+
+    def _generate_func_graphs(self):
+        for func in self._sorted_funcs():
+            self.func_graphs.append(FuncGraph(self.module, func))

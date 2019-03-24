@@ -22,9 +22,6 @@ class FuncGraph(object):
         self._generate_nodes()
         self._generate_rows()
 
-        # print(self.func['name'])
-        # print(self)
-
     def __str__(self):
         ret = ''
         ret += self.func['name']
