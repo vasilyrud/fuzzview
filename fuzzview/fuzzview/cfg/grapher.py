@@ -2,8 +2,6 @@ import os
 import json
 
 import fuzzview.const as const
-from fuzzview.cfg.fv.filegraph import FVFileGraph
-from fuzzview.cfg.dot.filegraph import DotFileGraph
 
 class Grapher(object):
 
@@ -13,16 +11,7 @@ class Grapher(object):
 
         self._find_cfg_files()
     
-    def make_graphs(self, graph_type):
-
-        if graph_type == 'dot':
-            graph_class = DotFileGraph
-        elif graph_type == 'fuzzview':
-            graph_class = FVFileGraph
-        else:
-            print('Invalid graph type specified')
-            exit(1)
-
+    def make_graphs(self, graph_class):
         for cfg_file in self.cfg_files:
             with open(cfg_file) as f:
                 module = json.load(f)

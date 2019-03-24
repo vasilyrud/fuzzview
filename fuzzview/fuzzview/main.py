@@ -1,6 +1,8 @@
 import argparse
 
 from fuzzview.cfg.grapher import Grapher
+from fuzzview.cfg.fv.filegraph import FVFileGraph
+from fuzzview.cfg.dot.filegraph import DotFileGraph
 
 def main():
     parser = argparse.ArgumentParser(
@@ -12,5 +14,5 @@ def main():
     args = parser.parse_args()
 
     grapher = Grapher(args.project_src_dir)
-    grapher.make_graphs('dot')
-    grapher.make_graphs('fuzzview')
+    grapher.make_graphs(DotFileGraph)
+    grapher.make_graphs(FVFileGraph)
