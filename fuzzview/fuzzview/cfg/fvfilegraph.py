@@ -9,14 +9,65 @@ class FVFileGraph(FileGraph):
     def __init__(self, module):
         super().__init__(module)
 
-        # Indexed by func names
-        self.func_graphs = {}
+        # In number order
+        self.func_graphs = []
+        self._generate_func_graphs()
 
-        self._generate_graph()
+        self.pixels()
 
-    def _generate_graph(self):
+    @property
+    def width(self):
+        # Sum of widths of all functions
+        width = sum(
+            (graph.width for graph in self.func_graphs)
+        ) + len(self.func_graphs) - 1
+
+        assert width > 0
+        return width
+    
+    @property
+    def height(self):
+        # Max function height
+        height = max(
+            (graph.height for graph in self.func_graphs)
+        )
+
+        assert height > 0
+        return height
+
+    def _generate_func_graphs(self):
         for func in self._sorted_funcs():
-            self.func_graphs[func['name']] = FuncGraph(self.module, func)
+            self.func_graphs.append(FuncGraph(self.module, func))
+
+    def get_func_graph(self, func_name):
+        for func_graph in self.func_graphs:
+            if func_graph.func['name'] == func_name:
+                return func_graph
+
+        raise KeyError(func_name + ' not found in func_graphs')
+
+    def pixels(self):
+        all_pixels = []
+
+        for line in range(self.height):
+            all_pixels += self.get_line(line)
+
+        count = 0
+        for i in range(self.height):
+            for j in range(self.width):
+                print(all_pixels[count], end='')
+                count += 1
+            print('')
+        print('')
+    
+    def get_line(self, line):
+        pixels = []
+
+        for graph in self.func_graphs:
+            pixels += graph.get_line(line)
+            pixels += [EmptyPixel()]
+        
+        return pixels[:-1]
 
 class FuncGraph(object):
 
@@ -26,15 +77,18 @@ class FuncGraph(object):
 
         # Nodes indexed by block names
         self.nodes = {}
-        # Rows of nodes indexed by depth
+        # Rows indexed by depth
         self.rows = []
+        # Rows indexed by line (for convenience)
+        self.line_to_row = []
+        # Lines within corresponding rows
+        self.line_to_row_line = []
 
         self._generate_nodes()
         self._generate_rows()
 
         # print(self.func['name'])
         # print(self)
-        # print(self.str_func())
 
     def __str__(self):
         ret = ''
@@ -47,18 +101,26 @@ class FuncGraph(object):
 
         return ret[:-1]
 
-    def str_func(self):
-        ret = ''
-        for row in self.rows:
-            ret += row.str_nodes()
+    def get_line(self, line):
+        if line >= self.height:
+            return [EmptyPixel()] * self.width
 
-        return ret
+        row = self.line_to_row[line]
+        row_line = self.line_to_row_line[line]
+
+        if not row:
+            return [EmptyPixel()] * self.width
+
+        pixels = row.get_line(row_line)
+        pixels += [EmptyPixel()] * (self.width - len(pixels))
+
+        return pixels
 
     @property
     def width(self):
         # Max width of all rows
         width = max(
-            (self._row_width(row) for row in self.rows)
+            (row.width for row in self.rows)
         )
 
         assert width > 0
@@ -68,7 +130,7 @@ class FuncGraph(object):
     def height(self):
         # Sum of all row heights + spaces
         height = sum(
-            (self._row_height(row) for row in self.rows)
+            (row.height for row in self.rows)
         ) + len(self.rows) - 1
 
         assert height > 0
@@ -108,7 +170,8 @@ class FuncGraph(object):
         self._set_back_edges()
         self._set_depths()
         self._set_prev_next()
-    
+        self._generate_pixels()
+
     def _set_back_edges(self):
         for src, dest in self.func['back_edges'].items():
             self.nodes[src].back_edges.add(dest)
@@ -171,6 +234,10 @@ class FuncGraph(object):
             for prev_block_name in self._sorted_node_names(node.block['prev']):
                 node.prev_nodes.append(self.nodes[prev_block_name])
 
+    def _generate_pixels(self):
+        for node in self.nodes.values():
+            node.generate_pixels()
+
     def _generate_rows(self):
         self.rows = [GraphRow(depth) for depth in range(self._num_rows())]
 
@@ -178,6 +245,17 @@ class FuncGraph(object):
             depth = node.longest_depth
             row = self.rows[depth]
             row.nodes.append(node)
+        
+        self.line_to_row = [None] * self.height
+        self.line_to_row_line = [None] * self.height
+
+        line = 0
+        for row in self.rows:
+            for row_line in range(row.height):
+                self.line_to_row[line] = row
+                self.line_to_row_line[line] = row_line
+                line += 1
+            line += 1
 
 class GraphRow(object):
 
@@ -212,27 +290,15 @@ class GraphRow(object):
 
         assert height > 0
         return height
-    
-    def str_nodes(self):
-        ret = ''
 
-        for line in range(self.height):
-            ret += self._str_line(line)
-            ret += '\n'
-        ret += '\n'
-        
-        return ret
-    
-    def _str_line(self, line):
-        ret = ''
+    def get_line(self, line):
+        pixels = []
 
         for node in self.nodes:
-            ret += node.str_line(line)
-            ret += const.EMPTY_CHAR
-        ret = ret[:-1]
-        assert len(ret) == self.width
+            pixels += node.get_line(line)
+            pixels += [EmptyPixel()]
         
-        return ret
+        return pixels[:-1]
 
 class GraphNode(object):
 
@@ -241,16 +307,13 @@ class GraphNode(object):
         self.func = func
         self.block = block
 
-        self.term_str = []
-        self._generate_term_str()
-
         # Filled in by FuncGraph
         self.back_edges = set()
         self.shortest_depth = math.inf
         self.longest_depth  = 0
-        # Sorted by block number
-        self.next_nodes = []
-        self.prev_nodes = []
+        self.next_nodes = [] # Sorted by block number
+        self.prev_nodes = [] # Sorted by block number
+        self.pixels = [] # Has to be filled in last
 
     @property
     def dimensions(self):
@@ -309,36 +372,86 @@ class GraphNode(object):
         
         return ret_str
 
-    def str_line(self, line):
+    def get_line(self, line):
         if line >= self.height:
-            return const.EMPTY_CHAR * self.width
+            return [EmptyPixel()] * self.width
         else:
-            return self.term_str[line]
+            return self.pixels[line]
 
-    def _generate_term_str(self):
+    def generate_pixels(self):
+        if self.prev_nodes:
+            prev_edges = []
+            for node in self.prev_nodes:
+                prev_edges += [InEdgePixel(self.block, node)]
+            prev_edges += [EmptyPixel()] * (self.width - len(prev_edges))
+            self.pixels.append(prev_edges)
 
-        if self.block['prev']:
-            prev_edges = ''
-            for prev_block_name in self.block['prev']:
-                prev_edges += const.IN_EDGE_CHAR
-            prev_edges = prev_edges.ljust(self.width, ' ')
-            self.term_str.append(prev_edges)
 
         if self.block['calls']:
             for call_func_name in self.block['calls']:
-                node_line = ''
-                node_line += const.NODE_CHAR * self.only_node_width
-                node_line += const.CALL_CHAR
-                self.term_str.append(node_line)
+                node_line = []
+                node_line += [NodePixel(self.block)] * self.only_node_width
+                node_line += [CallPixel(self.block, call_func_name)]
+                self.pixels.append(node_line)
         else:
-            node_line = ''
-            node_line += const.NODE_CHAR * self.only_node_width
-            self.term_str.append(node_line)
+            node_line = []
+            node_line += [NodePixel(self.block)] * self.only_node_width
+            self.pixels.append(node_line)
 
-        if self.block['next']:
-            next_edges = ''
-            for prev_block_name in self.block['next']:
-                next_edges += const.OUT_EDGE_CHAR
-            next_edges = next_edges.ljust(self.width, ' ')
-            self.term_str.append(next_edges)
 
+        if self.next_nodes:
+            next_edges = []
+            for node in self.next_nodes:
+                next_edges += [OutEdgePixel(self.block, node)]
+            next_edges += [EmptyPixel()] * (self.width - len(next_edges))
+            self.pixels.append(next_edges)
+
+class Pixel(object):
+
+    def __init__(self):
+        self.char = ' '
+        self.color = (255,255,255)
+    
+    def __str__(self):
+        return self.char
+
+class InEdgePixel(Pixel):
+
+    def __init__(self, block, src_node):
+        self.char = '.'
+        self.color = (0,0,0)
+
+        self.block = block
+        self.src_node = src_node
+
+class OutEdgePixel(Pixel):
+
+    def __init__(self, block, dest_node):
+        self.char = '\''
+        self.color = (0,0,0)
+
+        self.block = block
+        self.src_node = dest_node
+
+class CallPixel(Pixel):
+
+    def __init__(self, block, dest_func_name):
+        self.char = '-'
+        self.color = (0,0,0)
+
+        self.block = block
+        self.dest_func_name = dest_func_name
+
+class NodePixel(Pixel):
+
+    def __init__(self, block):
+        self.char = '#'
+        self.color = (0,0,0)
+
+        self.block = block
+
+class EmptyPixel(Pixel):
+
+    def __init__(self):
+        self.char = ' '
+        self.color = (255,255,255)
