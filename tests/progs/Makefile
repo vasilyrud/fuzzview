@@ -1,4 +1,4 @@
-CC = python3 $(FUZZVIEW_DIR)/fv-clang.py
+CC = python3 $(FUZZVIEW_DIR)/fv-compiler.py
 
 CFLAGS = -Wall
 CFLAGS += -Wno-unused-variable
