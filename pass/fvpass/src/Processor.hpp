@@ -5,6 +5,8 @@
 
 #include "CfgBuilder.hpp"
 
+#define WAS_PROCESSED_MD_NAME "fv.processed"
+
 namespace fv {
 
 class Processor {
@@ -21,6 +23,9 @@ class Processor {
 
     bool hasFuncDef(llvm::Module &M);
     void assignBlockIds(llvm::Function &F);
+
+    bool wasProcessed(llvm::Module &M);
+    void setProcessed(llvm::Module &M);
 
 };
 

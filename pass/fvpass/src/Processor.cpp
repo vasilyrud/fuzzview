@@ -30,6 +30,16 @@ void Processor::assignBlockIds(llvm::Function &F) {
     }
 }
 
+bool Processor::wasProcessed(llvm::Module &M) {
+
+    return M.getNamedMetadata(WAS_PROCESSED_MD_NAME) != nullptr;
+}
+
+void Processor::setProcessed(llvm::Module &M) {
+
+    M.getOrInsertNamedMetadata(WAS_PROCESSED_MD_NAME);
+}
+
 void Processor::processModule(llvm::Module &M) {
 
     uint32_t func_counter;
@@ -38,6 +48,11 @@ void Processor::processModule(llvm::Module &M) {
     // Check if there are only declarations
     // to prevent processing an "empty" file.
     if (!hasFuncDef(M)) return;
+
+    // Check if the module was already processed
+    // by our pass. Can happen, for example, if
+    // compiled .c -> .bc and then .bc -> .exe
+    if (wasProcessed(M)) return;
 
     cfg_builder.addModule(M);
 
@@ -66,4 +81,6 @@ void Processor::processModule(llvm::Module &M) {
     }
 
     cfg_builder.save(M);
+
+    setProcessed(M);
 }
