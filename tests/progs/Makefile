@@ -1,18 +1,12 @@
-CC = $(LLVM_HOME)/bin/clang
+CC = python3 $(FUZZVIEW_DIR)/fv-clang.py
 
-CFLAGS = -O0 -Wall -g
-# CFLAGS += -fsanitize-coverage=edge,trace-pc-guard
-CFLAGS += -Wno-nullability-completeness
+CFLAGS = -Wall
 CFLAGS += -Wno-unused-variable
-CFLAGS += -Xclang
-CFLAGS += -load
-CFLAGS += -Xclang
-CFLAGS += $(FUZZVIEW_DIR)/pass/build/fvpass/libFvPass.so
+# CFLAGS += -fsanitize-coverage=edge,trace-pc-guard
 
-LDFLAGS = -O0 -Wall -g
-# LDFLAGS += -fsanitize=address
-LDFLAGS += -Wno-nullability-completeness
+LDFLAGS = -Wall
 LDFLAGS += -Wno-unused-variable
+# LDFLAGS += -fsanitize=address
 
 BIN = bin
 # SANCOV = $(FUZZVIEW_DIR)/rt/sancov.c
