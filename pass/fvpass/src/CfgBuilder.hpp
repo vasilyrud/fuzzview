@@ -10,6 +10,8 @@
 #include "llvm/IR/InstVisitor.h"
 #include "llvm/Analysis/CFG.h"
 #include "llvm/Support/Path.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/MD5.h"
 
 #include "nlohmann/json.hpp"
 
@@ -17,6 +19,8 @@
 #include "Metadata.hpp"
 
 #define NICE_JSON_ENV_VAR "FV_NICE_JSON"
+
+#define CFG_JSON_EXTENSION ".cfg.json"
 
 #define CONDITION_TRUE  0
 #define CONDITION_FALSE 1

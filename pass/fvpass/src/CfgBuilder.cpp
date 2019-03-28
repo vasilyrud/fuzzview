@@ -85,19 +85,13 @@ llvm::Instruction *CfgBuilder::getFirstInstruction(llvm::Module &M) {
 
 std::string CfgBuilder::getPath(llvm::Module &M) {
 
-    auto *I = getFirstInstruction(M);
-    const llvm::DILocation *loc = I->getDebugLoc().get();
+    llvm::SmallString<256> CWD;
+    llvm::sys::fs::current_path(CWD);
 
-    return loc->getDirectory().str();
+    return CWD.str();
 }
 
 std::string CfgBuilder::getName(llvm::Module &M) {
-
-    // Double-check that debug info matches LLVM info.
-    assert(
-        getFirstInstruction(M)->getDebugLoc().get()->getFilename().str() 
-        == M.getName().str()
-    );
 
     return rmFileExtension(M.getName().str());
 }
@@ -284,8 +278,7 @@ void CfgBuilder::addBranch(llvm::BasicBlock &B, json &branch_json) {
 
 void CfgBuilder::save(llvm::Module &M) {
 
-    std::string cur_dir = ".";
-    std::string full_path = cur_dir + "/" + getName(M) + ".cfg.json";
+    std::string full_path = getPath(M) + "/" + getName(M) + CFG_JSON_EXTENSION;
 
     std::ofstream f;
     f.open (full_path, std::ios::out | std::ios::trunc);
