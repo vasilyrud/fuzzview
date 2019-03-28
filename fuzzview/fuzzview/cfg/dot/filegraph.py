@@ -5,8 +5,8 @@ from fuzzview.cfg.filegraph import FileGraph
 
 class DotFileGraph(FileGraph):
 
-    def __init__(self, module):
-        super().__init__(module)
+    def __init__(self, module, cfg_file_path):
+        super().__init__(module, cfg_file_path)
 
         self.graph = self._generate_graph()
     
@@ -15,14 +15,14 @@ class DotFileGraph(FileGraph):
         self._save_pdf()
 
     def _save_dot(self):
-        dot_filename = self.filename + const.CFG_DOT_EXTENSION
+        dot_filename = self.save_filename + const.CFG_DOT_EXTENSION
 
         with open(dot_filename, 'w') as f:
             f.write(self.graph)
 
     def _save_pdf(self):
-        dot_filename = self.filename + const.CFG_DOT_EXTENSION
-        pdf_filename = self.filename + const.CFG_PDF_EXTENSION
+        dot_filename = self.save_filename + const.CFG_DOT_EXTENSION
+        pdf_filename = self.save_filename + const.CFG_PDF_EXTENSION
 
         cmd = 'dot -Tpdf ' + dot_filename + ' -o ' + pdf_filename
         

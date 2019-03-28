@@ -11,8 +11,8 @@ def test_compile(compile_progs):
     assert compile_progs[0].returncode == 0
 
 def test_module_names(compile_progs, subA_common_cfg, subB_common_cfg):
-    cfgA = subA_common_cfg
-    cfgB = subB_common_cfg
+    cfgA, _ = subA_common_cfg
+    cfgB, _ = subB_common_cfg
     progs_dir = compile_progs[1]
 
     assert cfgA['path'] == util.getenv(const.FV_ENV_VAR) + '/' + progs_dir
@@ -24,7 +24,7 @@ def test_module_names(compile_progs, subA_common_cfg, subB_common_cfg):
     assert cfgB['extension'] == '.c'
 
 def test_functions(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     funcs = cfg['functions']
 
     assert 'A' in funcs
@@ -33,7 +33,7 @@ def test_functions(compile_progs, branches1_cfg):
     assert 'D' in funcs
 
 def test_direct_calls(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     blocks = cfg['functions']['A']['blocks']
 
     block = blocks['0']
@@ -45,7 +45,7 @@ def test_direct_calls(compile_progs, branches1_cfg):
     assert block['calls'][0]['signature'] == 'i32 ()'
 
 def test_indirect_calls(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     blocks = cfg['functions']['A']['blocks']
 
     block = blocks['1']
@@ -53,14 +53,14 @@ def test_indirect_calls(compile_progs, branches1_cfg):
     assert block['calls'][0]['signature'] == 'i32 ()'
 
 def test_multiple_calls(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     blocks = cfg['functions']['A']['blocks']
 
     block = blocks['5']
     assert len(block['calls']) == 2
 
 def test_prev_next(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     blocks = cfg['functions']['A']['blocks']
 
     block = blocks['0']
@@ -75,7 +75,7 @@ def test_prev_next(compile_progs, branches1_cfg):
     assert len(block['prev']) == 2
 
 def test_conditional_branches(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     blocks = cfg['functions']['A']['blocks']
 
     block = blocks['0']
@@ -84,14 +84,14 @@ def test_conditional_branches(compile_progs, branches1_cfg):
     assert block['branch']['dest']['2'] == False
 
 def test_direct_branches(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     blocks = cfg['functions']['A']['blocks']
 
     block = blocks['1']
     assert block['branch']['type'] == 'direct'
 
 def test_switch_branches(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
+    cfg, _ = branches1_cfg
     blocks = cfg['functions']['A']['blocks']
 
     block = blocks['3']
@@ -100,21 +100,21 @@ def test_switch_branches(compile_progs, branches1_cfg):
     assert block['branch']['dest']['5'] == 'default'
 
 def test_back_edges_nested(compile_progs, loops1_cfg):
-    cfg = loops1_cfg
+    cfg, _ = loops1_cfg
     back_edges = cfg['functions']['main']['back_edges']
 
     assert ('4', '2') in back_edges.items()
     assert ('7', '1') in back_edges.items()
 
 def test_back_edges_same_dest(compile_progs, loops1_cfg):
-    cfg = loops1_cfg
+    cfg, _ = loops1_cfg
     back_edges = cfg['functions']['main']['back_edges']
 
     assert ('11', '9') in back_edges.items()
     assert ('13', '9') in back_edges.items()
 
 def test_back_edges_irreducible(compile_progs, loops1_cfg):
-    cfg = loops1_cfg
+    cfg, _ = loops1_cfg
     back_edges = cfg['functions']['main']['back_edges']
 
     assert ('23', '18') in back_edges.items()

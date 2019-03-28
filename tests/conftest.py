@@ -38,7 +38,7 @@ def get_cfg(prog_name):
     with open(cfg_file) as f:
         cfg = json.load(f)
     
-    return cfg
+    return cfg, cfg_file
 
 @pytest.fixture(scope='session')
 def branches1_cfg():

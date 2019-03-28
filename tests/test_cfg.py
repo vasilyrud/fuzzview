@@ -5,8 +5,8 @@ import pytest
 from fuzzview.cfg.fv.filegraph import FVFileGraph
 
 def test_depths(compile_progs, loops1_cfg):
-    cfg = loops1_cfg
-    graph = FVFileGraph(cfg)
+    cfg, cfg_file = loops1_cfg
+    graph = FVFileGraph(cfg, cfg_file)
 
     node = graph.get_func_graph('main').nodes['0']
     assert node.shortest_depth == 0
@@ -41,8 +41,8 @@ def test_depths(compile_progs, loops1_cfg):
     assert node.longest_depth  == 18
 
 def test_dimensions(compile_progs, branches1_cfg):
-    cfg = branches1_cfg
-    graph = FVFileGraph(cfg)
+    cfg, cfg_file = branches1_cfg
+    graph = FVFileGraph(cfg, cfg_file)
 
     assert graph.get_func_graph('D').nodes['0'].only_node_dimensions == (1, 1)
     assert graph.get_func_graph('D').nodes['0'].dimensions == (1, 1)

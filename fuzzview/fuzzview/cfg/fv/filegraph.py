@@ -7,8 +7,8 @@ import fuzzview.const as const
 
 class FVFileGraph(FileGraph):
 
-    def __init__(self, module):
-        super().__init__(module)
+    def __init__(self, module, cfg_file_path):
+        super().__init__(module, cfg_file_path)
 
         # In number order
         self.func_graphs = []
@@ -61,7 +61,7 @@ class FVFileGraph(FileGraph):
 
         image = Image.new('RGB', self.dimensions)
         image.putdata(pixels)
-        image.save(self.filename + const.CFG_PNG_EXTENSION, format='PNG')
+        image.save(self.save_filename + const.CFG_PNG_EXTENSION, format='PNG')
 
     def pixels(self):
         all_pixels = []

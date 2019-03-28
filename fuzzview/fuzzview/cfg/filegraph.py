@@ -1,8 +1,17 @@
+import os
+
+import fuzzview.const as const
 
 class FileGraph(object):
 
-    def __init__(self, module):
+    def __init__(self, module, cfg_file_path):
         self.module = module
+
+        # Location of .cfg.json file (rather than 
+        # the location of .c source file).
+        self.cfg_dirpath, self.cfg_filename_with_ext = os.path.split(cfg_file_path)
+        ext_len = len(const.CFG_JSON_EXTENSION)
+        self.cfg_filename = self.cfg_filename_with_ext[:-ext_len]
 
     def save(self):
         pass
@@ -11,10 +20,17 @@ class FileGraph(object):
         pass
 
     @property
-    def filename(self):
+    def source_filename(self):
         return (
             self.module['path'] + '/' + 
             self.module['name']
+        )
+    
+    @property
+    def save_filename(self):
+        return (
+            self.cfg_dirpath + '/' +
+            self.cfg_filename
         )
 
     def _sorted_funcs(self):

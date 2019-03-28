@@ -15,7 +15,7 @@ class Grapher(object):
         for cfg_file in self.cfg_files:
             with open(cfg_file) as f:
                 module = json.load(f)
-                graph = graph_class(module)
+                graph = graph_class(module, cfg_file)
                 
                 graph.terminal_print()
                 graph.save()
