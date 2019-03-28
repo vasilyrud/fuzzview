@@ -36,6 +36,8 @@ branches1: branches1.bc
 clean:
 	rm ./*.o 2>/dev/null || true
 	rm ./*.bc 2>/dev/null || true
+	rm ./*.bc-* 2>/dev/null || true
+	rm ./*.bc.tmp 2>/dev/null || true
 	rm ./*.cfg.json 2>/dev/null || true
 	rm ./*.cfg.dot 2>/dev/null || true
 	rm ./*.cfg.pdf 2>/dev/null || true
@@ -43,6 +45,8 @@ clean:
 	
 	rm ./**/*.o 2>/dev/null || true
 	rm ./**/*.bc 2>/dev/null || true
+	rm ./**/*.bc-* 2>/dev/null || true
+	rm ./**/*.bc.tmp 2>/dev/null || true
 	rm ./**/*.cfg.json 2>/dev/null || true
 	rm ./**/*.cfg.dot 2>/dev/null || true
 	rm ./**/*.cfg.pdf 2>/dev/null || true

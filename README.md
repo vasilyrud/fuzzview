@@ -40,7 +40,7 @@ make
 To make `.cfg.json` files readable, set before compiling:
 
 ```
-FV_NICE_JSON=1 
+FV_NICE_JSON=1
 ```
 
 Running fuzzview:
