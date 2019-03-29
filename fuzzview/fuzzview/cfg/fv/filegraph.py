@@ -1,4 +1,5 @@
 from PIL import Image
+import logging
 
 from fuzzview.cfg.filegraph import FileGraph
 from fuzzview.cfg.fv.funcgraph import FuncGraph
@@ -81,5 +82,7 @@ class FVFileGraph(FileGraph):
         return pixels[:-1]
 
     def _generate_func_graphs(self):
+        logging.info('Generating ' + self.module['name'])
         for func in self._sorted_funcs():
+            logging.debug('Init func_graph for function ' + func['name'])
             self.func_graphs.append(FuncGraph(self.module, func))

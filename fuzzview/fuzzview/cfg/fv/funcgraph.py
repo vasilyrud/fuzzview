@@ -1,4 +1,5 @@
 from collections import deque
+import logging
 
 from fuzzview.cfg.fv.graphnode import GraphNode
 from fuzzview.cfg.fv.graphrow import GraphRow
@@ -128,6 +129,20 @@ class FuncGraph(object):
             key=lambda b_name: self.func['blocks'][b_name]['number']
         )
 
+    def _update_shortest(self, cur_depth, cur_node):
+        if cur_depth < cur_node.shortest_depth:
+            cur_node.shortest_depth = cur_depth
+            return True
+        
+        return False
+
+    def _update_longest(self, cur_depth, cur_node):
+        if cur_depth > cur_node.longest_depth:
+            cur_node.longest_depth = cur_depth
+            return True
+        
+        return False
+
     def _set_depths(self):
         q = deque()
         init_depth = 0
@@ -141,11 +156,12 @@ class FuncGraph(object):
             cur_name  = cur_block['name']
             cur_node  = self.nodes[cur_name]
 
-            if cur_depth < cur_node.shortest_depth:
-                cur_node.shortest_depth = cur_depth
-            
-            if cur_depth > cur_node.longest_depth:
-                cur_node.longest_depth = cur_depth
+            shortest_updated = self._update_shortest(cur_depth, cur_node)
+            longest_updated  = self._update_longest(cur_depth, cur_node)
+
+            if (not shortest_updated and
+                not longest_updated):
+                continue
 
             for next_block_name in self._sorted_forward_next(cur_block):
                 next_block = self.func['blocks'][next_block_name]
