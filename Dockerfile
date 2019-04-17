@@ -56,6 +56,14 @@ WORKDIR /root
 RUN --mount=type=ssh git clone -b 'OpenSSL_1_0_1g' --single-branch --depth 1 git@github.com:openssl/openssl.git openssl
 ENV OPENSSL_DIR /root/openssl
 
+# Install openssl
+WORKDIR /root/openssl
+ENV CC "python3 /root/fuzzview/fv-compiler.py"
+RUN mkdir bin
+RUN ./config no-threads --prefix=/root/openssl/bin --openssldir=/root/openssl/bin/openssl
+RUN make
+RUN make install_sw
+
 # # Copy root folder
 # WORKDIR /root
 # RUN mkdir fuzzview
