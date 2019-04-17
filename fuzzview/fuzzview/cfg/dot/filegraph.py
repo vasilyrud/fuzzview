@@ -4,23 +4,41 @@ import fuzzview.const as const
 from fuzzview.cfg.filegraph import FileGraph
 
 class DotFileGraph(FileGraph):
+    ''' dot graph generator.
+
+    Used to create dot-format-based graphs of the cfg.
+
+    The dot-format graphs are useful for debugging, but
+    quickly get out of hand for large cfgs or many files.
+
+    Attributes:
+        graph: All the dot graphs for functions in this 
+            file, combined into a single dot graph (string).
+    '''
 
     def __init__(self, module, cfg_file_path):
+
         super().__init__(module, cfg_file_path)
 
         self.graph = self._generate_graph()
     
     def save(self):
+        ''' Saves a dot graph first in order to run the
+        `dot` command on it directly, producing a PDF.
+        '''
+
         self._save_dot()
         self._save_pdf()
 
     def _save_dot(self):
+
         dot_filename = self.save_filename + const.CFG_DOT_EXTENSION
 
         with open(dot_filename, 'w') as f:
             f.write(self.graph)
 
     def _save_pdf(self):
+
         dot_filename = self.save_filename + const.CFG_DOT_EXTENSION
         pdf_filename = self.save_filename + const.CFG_PDF_EXTENSION
 
@@ -31,6 +49,7 @@ class DotFileGraph(FileGraph):
         )
 
     def _generate_graph(self):
+
         ret = ''
         ret += 'digraph G {\n'
 
@@ -42,6 +61,7 @@ class DotFileGraph(FileGraph):
         return ret
 
     def _make_call_info(self, call):
+
         ret = ''
 
         if call['type'] == 'direct':
@@ -53,6 +73,7 @@ class DotFileGraph(FileGraph):
         return ret
 
     def _make_label(self, block):
+
         ret = ''
         ret += block['name']
         ret += '\n'
@@ -66,6 +87,7 @@ class DotFileGraph(FileGraph):
         return ret
 
     def _make_block_node(self, func, block):
+
         ret = ''
         ret += '\t"'
         ret += self._block_id(func, block)
@@ -83,6 +105,7 @@ class DotFileGraph(FileGraph):
         return ret
 
     def _make_func_cluster(self, func):
+
         ret = ''
         ret += '\tsubgraph "cluster' + func['name'] + '" {\n'
         ret += '\t\tlabel="' + func['name'] + '";\n'
@@ -98,6 +121,7 @@ class DotFileGraph(FileGraph):
         return ret
 
     def _make_func_graph(self, func):
+
         ret = ''
 
         for block in func['blocks'].values():
