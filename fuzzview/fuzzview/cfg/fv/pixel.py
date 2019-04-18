@@ -2,6 +2,17 @@ import colorsys
 from palettable.matplotlib import Plasma_20
 
 class Pixel(object):
+    ''' Single pixel in a graph.
+
+    Useful because graphs can be rendered on
+    different mediums.
+
+    Attributes:
+        char: Single character representation.
+        rgb: Color of the pixel as a triple.
+        block: The CFG block which the pixel is
+            part of (if any).
+    '''
 
     def __init__(self):
         self.char = ' '

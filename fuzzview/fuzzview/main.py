@@ -6,6 +6,7 @@ from fuzzview.cfg.fv.filegraph import FVFileGraph
 from fuzzview.cfg.dot.filegraph import DotFileGraph
 
 def main():
+
     parser = argparse.ArgumentParser(
         description='fuzzview: fuzzing visualizer')
 
