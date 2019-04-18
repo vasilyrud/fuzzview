@@ -7,6 +7,8 @@
 **/*.cfg.dot
 **/*.cfg.pdf
 **/*.cfg.png
+**/*.file.png
+**/*_fuzzview_function_images
 **/*.bc
 **/*.ll
 **/*.o
@@ -15,6 +17,7 @@ tests/progs/bin/*
 
 pass/build
 openssl
+misc
 
 __pycache__/
 .pytest_cache/

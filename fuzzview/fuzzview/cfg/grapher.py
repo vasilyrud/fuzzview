@@ -71,3 +71,4 @@ class FileGrapher(object):
             
             # graph.terminal_print()
             graph.save()
+            graph.save_funcs()

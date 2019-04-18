@@ -1,5 +1,6 @@
 from PIL import Image
 import logging
+import os
 
 from fuzzview.cfg.filegraph import FileGraph
 from fuzzview.cfg.fv.funcgraph import FuncGraph
@@ -81,6 +82,17 @@ class FVFileGraph(FileGraph):
             print('')
         print('')
 
+    def save_funcs(self):
+        ''' Save the images produced by individual functions
+        to a dir.
+        '''
+
+        func_images_dir = self.save_filename + '_' + const.FV_FUNC_IMG_DIR
+        os.makedirs(func_images_dir, exist_ok=True)
+
+        for func_graph in self.func_graphs:
+            func_graph.save(func_images_dir)
+
     def save(self):
         ''' Save the image produced by this class to a file.
         '''
@@ -89,7 +101,7 @@ class FVFileGraph(FileGraph):
 
         image = Image.new('RGB', self.dimensions)
         image.putdata(pixels)
-        image.save(self.save_filename + const.CFG_PNG_EXTENSION, format='PNG')
+        image.save(self.save_filename + const.FILE_PNG_EXTENSION, format='PNG')
 
     def pixels(self):
         ''' Collect all the lines into a single continuous
@@ -102,7 +114,7 @@ class FVFileGraph(FileGraph):
             all_pixels += self.get_line(line)
 
         return all_pixels
-    
+
     def get_line(self, line):
         ''' Collect pixels for a single line of
         the image.

@@ -44,7 +44,7 @@ class FileGraph(object):
             self.module['path'] + '/' + 
             self.module['name']
         )
-    
+
     @property
     def save_filename(self):
 

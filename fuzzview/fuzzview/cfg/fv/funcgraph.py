@@ -1,9 +1,11 @@
 from collections import deque
+from PIL import Image
 import logging
 
 from fuzzview.cfg.fv.graphnode import GraphNode
 from fuzzview.cfg.fv.graphrow import GraphRow
 from fuzzview.cfg.fv.pixel import EmptyPixel
+import fuzzview.const as const
 
 class FuncGraph(object):
     ''' Per-function graph.
@@ -70,6 +72,11 @@ class FuncGraph(object):
         return pixels
 
     @property
+    def dimensions(self):
+
+        return self.width, self.height
+
+    @property
     def width(self):
 
         # Max width of all rows
@@ -103,6 +110,33 @@ class FuncGraph(object):
 
         assert not first_block['prev']
         return first_block
+
+    @property
+    def save_filename(self):
+
+        return self.func['name']
+
+    def save(self, func_images_dir):
+        ''' Save the image produced by this class to a file.
+        '''
+
+        pixels = [pixel.rgb for pixel in self.pixels()]
+
+        image = Image.new('RGB', self.dimensions)
+        image.putdata(pixels)
+        image.save(func_images_dir + '/' + self.save_filename + const.FUNC_PNG_EXTENSION, format='PNG')
+
+    def pixels(self):
+        ''' Collect all the lines into a single continuous
+        pixel array, which is the format that PIL expects.
+        '''
+ 
+        all_pixels = []
+
+        for line in range(self.height):
+            all_pixels += self.get_line(line)
+
+        return all_pixels
 
     def _sorted_nodes(self):
 

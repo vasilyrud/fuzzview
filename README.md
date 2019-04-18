@@ -37,6 +37,12 @@ cd $FV_DIR/tests/progs
 make
 ```
 
+To compile any program with custom clang, set:
+
+```
+export CC="python3 $FV_DIR/fv-compiler.py"
+```
+
 To make `.cfg.json` files readable, set before compiling:
 
 ```
