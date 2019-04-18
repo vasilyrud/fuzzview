@@ -8,22 +8,22 @@ Requires `dot` (graphviz)
 
 ## To get started
 
-Set `LLVM_HOME` to the location of LLVM install:
+Set `FV_LLVM_DIR` to the location of LLVM install:
 
 ```
-export LLVM_HOME=/path/to/llvm/install
+export FV_LLVM_DIR=/path/to/llvm/install
 ```
 
-Set `FUZZVIEW_DIR` to the location of this folder:
+Set `FV_DIR` to the location of this folder:
 
 ```
-export FUZZVIEW_DIR=/path/to/fuzzview
+export FV_DIR=/path/to/fuzzview
 ```
 
 To compile LLVM pass:
 
 ```
-cd $FUZZVIEW_DIR/pass
+cd $FV_DIR/pass
 mkdir build
 cd build
 cmake ..
@@ -33,7 +33,7 @@ make
 To compile test progs with custom clang:
 
 ```
-cd $FUZZVIEW_DIR/tests/progs
+cd $FV_DIR/tests/progs
 make
 ```
 
@@ -46,11 +46,11 @@ FV_NICE_JSON=1
 Running fuzzview:
 
 ```
-PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 fuzzview $FUZZVIEW_DIR/tests/progs
+PYTHONPATH="${PYTHONPATH}:${FV_DIR}/fuzzview" python3 fuzzview $FV_DIR/tests/progs
 ```
 
 Running tests:
 
 ```
-PYTHONPATH="${PYTHONPATH}:${FUZZVIEW_DIR}/fuzzview" python3 -m pytest -x
+PYTHONPATH="${PYTHONPATH}:${FV_DIR}/fuzzview" python3 -m pytest -x
 ```

@@ -33,7 +33,7 @@ RUN wget http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu
 RUN tar -xJf clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 RUN rm clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 RUN mv clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04 bin
-ENV LLVM_HOME /root/llvm/701/bin
+ENV FV_LLVM_DIR /root/llvm/701/bin
 
 # Install cmake (newer version than that available with apt)
 WORKDIR /root
@@ -70,4 +70,4 @@ RUN make install_sw
 # COPY ./ /root/fuzzview/
 
 # Set fuzzview location
-ENV FUZZVIEW_DIR /root/fuzzview
+ENV FV_DIR /root/fuzzview

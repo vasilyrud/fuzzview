@@ -1,4 +1,4 @@
-CC = python3 $(FUZZVIEW_DIR)/fv-compiler.py
+CC = python3 $(FV_DIR)/fv-compiler.py
 
 CFLAGS = -Wall
 CFLAGS += -Wno-unused-variable
@@ -9,7 +9,7 @@ LDFLAGS += -Wno-unused-variable
 # LDFLAGS += -fsanitize=address
 
 BIN = bin
-# SANCOV = $(FUZZVIEW_DIR)/rt/sancov.c
+# SANCOV = $(FV_DIR)/rt/sancov.c
 
 PROGS = include1 loops1 branches1
 ALL_FILES = $(PROGS) common subA/common subB/common

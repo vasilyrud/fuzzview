@@ -5,14 +5,14 @@
 cmake_minimum_required(VERSION 3.13)
 project(fvpass)
 
-# SET(CMAKE_C_COMPILER $ENV{LLVM_HOME}/bin/clang)
-# SET(CMAKE_CXX_COMPILER $ENV{LLVM_HOME}/bin/clang++)
+# SET(CMAKE_C_COMPILER $ENV{FV_LLVM_DIR}/bin/clang)
+# SET(CMAKE_CXX_COMPILER $ENV{FV_LLVM_DIR}/bin/clang++)
 
-# we need LLVM_HOME in order not automatically set LLVM_DIR
-if(NOT DEFINED ENV{LLVM_HOME})
-    message(FATAL_ERROR "$LLVM_HOME is not defined")
+# we need FV_LLVM_DIR in order not automatically set LLVM_DIR
+if(NOT DEFINED ENV{FV_LLVM_DIR})
+    message(FATAL_ERROR "$FV_LLVM_DIR is not defined")
 else ()
-    set(ENV{LLVM_DIR} $ENV{LLVM_HOME}/lib/cmake/llvm)
+    set(ENV{LLVM_DIR} $ENV{FV_LLVM_DIR}/lib/cmake/llvm)
 endif()
 
 find_package(LLVM REQUIRED CONFIG)

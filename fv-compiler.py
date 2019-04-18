@@ -1,8 +1,8 @@
 import os
 import sys
 
-FV_ENV_VAR = 'FUZZVIEW_DIR'
-LLVM_ENV_VAR = 'LLVM_HOME'
+FV_ENV_VAR = 'FV_DIR'
+LLVM_ENV_VAR = 'FV_LLVM_DIR'
 
 NO_UNDEFS = ['-Wl,-z,defs', '-Wl,--no-undefined']
 OPTIMIZATIONS = ['-O1', '-O2', '-O3', '-Os', '-Oz', '-O', '-Ofast', '-funroll-loops']
