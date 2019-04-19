@@ -34,6 +34,9 @@ class FileGraph(object):
     def save(self):
         pass
     
+    def save_funcs(self):
+        pass
+    
     def terminal_print(self):
         pass
 

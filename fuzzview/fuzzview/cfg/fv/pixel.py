@@ -14,49 +14,51 @@ class Pixel(object):
             part of (if any).
     '''
 
+    char = ' '
+    rgb = (255, 255, 255)
+
     def __init__(self):
-        self.char = ' '
-        self.rgb = (255,255,255)
-    
+        pass
+
     def __str__(self):
         return self.char
 
 class InEdgePixel(Pixel):
 
-    def __init__(self, block, src_node):
-        self.char = '.'
-        self.rgb = (0,0,0)
+    char = '.'
+    rgb = (0,0,0)
 
+    def __init__(self, block, src_node):
         self.block = block
         self.src_node = src_node
 
 class OutEdgePixel(Pixel):
 
-    def __init__(self, block, dest_node):
-        self.char = '\''
-        self.rgb = (0,0,0)
+    char = '\''
+    rgb = (0,0,0)
 
+    def __init__(self, block, dest_node):
         self.block = block
         self.src_node = dest_node
 
 class CallPixel(Pixel):
 
-    def __init__(self, block, dest_func_name):
-        self.char = '-'
-        self.rgb = (0,0,0)
+    char = '-'
+    rgb = (0,0,0)
 
+    def __init__(self, block, dest_func_name):
         self.block = block
         self.dest_func_name = dest_func_name
 
 class NodePixel(Pixel):
 
-    def __init__(self, block, depth):
-        self.char = '#'
-        # self.rgb = (0,0,0)
+    char = '#'
+    # rgb = (0,0,0)
 
+    def __init__(self, block, depth):
         self.block = block
         self.depth = depth
-    
+
     @property
     def rgb(self):
         colors = Plasma_20.mpl_colors
@@ -78,7 +80,5 @@ class NodePixel(Pixel):
         # return r, g, b
 
 class EmptyPixel(Pixel):
-
-    def __init__(self):
-        self.char = ' '
-        self.rgb = (255,255,255)
+    char = ' '
+    rgb = (255,255,255)
