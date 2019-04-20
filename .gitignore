@@ -18,6 +18,7 @@ tests/progs/bin/*
 pass/build
 openssl
 misc
+fuzzview.egg-info
 
 __pycache__/
 .pytest_cache/

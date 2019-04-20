@@ -4,8 +4,6 @@
 
 Works with LLVM version 7.0.1
 
-Requires `dot` (graphviz)
-
 ## To get started
 
 Set `FV_LLVM_DIR` to the location of LLVM install:
@@ -30,13 +28,6 @@ cmake ..
 make
 ```
 
-To compile test progs with custom clang:
-
-```
-cd $FV_DIR/tests/progs
-make
-```
-
 To compile any program with custom clang, set:
 
 ```
@@ -49,14 +40,19 @@ To make `.cfg.json` files readable, set before compiling:
 FV_NICE_JSON=1
 ```
 
-Running fuzzview:
+Running fuzzview on test progs:
 
 ```
-PYTHONPATH="${PYTHONPATH}:${FV_DIR}/fuzzview" python3 fuzzview $FV_DIR/tests/progs
+cd $FV_DIR/tests/progs
+make
+cd $FV_DIR
+python3 fuzzview dir $FV_DIR/tests/progs
 ```
 
 Running tests:
 
 ```
-PYTHONPATH="${PYTHONPATH}:${FV_DIR}/fuzzview" python3 -m pytest -x
+cd $FV_DIR
+pip3 install -e fuzzview
+python3 -m pytest -x
 ```
