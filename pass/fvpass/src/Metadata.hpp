@@ -11,10 +11,15 @@
 
 namespace fv {
 
+// Helper to set and get metadata, since
+// every metadata access involves several
+// non-obvious calls to get to the value.
 class Metadata {
 
   public:
 
+    // Set metadata to an instruction, something like:
+    //     item.metadata[metadata_key] = data
     static void set(
         llvm::Instruction *item, 
         const std::string &metadata_key, 
@@ -26,6 +31,8 @@ class Metadata {
                 llvm::MDString::get(item->getContext(), data)));
     }
 
+    // Get metadata of an instruction, something like:
+    //     return item.metadata[metadata_key]
     static std::string get(
         const llvm::Instruction *item, 
         const std::string &metadata_key

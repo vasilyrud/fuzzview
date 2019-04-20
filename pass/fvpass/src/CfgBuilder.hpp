@@ -30,6 +30,11 @@
 
 namespace fv {
 
+// Used to create the json structure that stores
+// a module's CFG.
+//
+// Must first add the module, then a function, and
+// then all the function's blocks.
 class CfgBuilder {
 
     using json = nlohmann::json;
@@ -38,14 +43,31 @@ class CfgBuilder {
 
     CfgBuilder();
 
+    // Add module-specific details and init
+    // the "functions" sub-object.
     void addModule(llvm::Module &M);
+
+    // Add function-specific details and init
+    // the "blocks" sub-object.
+    //
+    // func_number specifies the order of the
+    // function in the IR of the module.
     void addFunction(llvm::Function &F, uint32_t func_number);
+
+    // Add block-specific details.
+    // 
+    // block_number specifies the order of the
+    // block in the IR of the function.
     void addBlock(llvm::BasicBlock &B, uint32_t block_number);
 
+    // Save the json file to the same dir as
+    // the source file, and using the same
+    // base name.
     void save(llvm::Module &M);
 
   private:
 
+    // Root json object used as base in addModule().
     json file_json;
 
     void addBackEdges(llvm::Function &F, json &back_edges_json);
@@ -68,6 +90,8 @@ class CfgBuilder {
 
 };
 
+// Visit terminating instructions in order to
+// generate CFG edges in the json structure.
 struct CfgTermInstVisitor : public llvm::InstVisitor<CfgTermInstVisitor, void> {
 
     using json = nlohmann::json;
@@ -75,6 +99,7 @@ struct CfgTermInstVisitor : public llvm::InstVisitor<CfgTermInstVisitor, void> {
     llvm::BasicBlock &B;
     json &branch_json;
 
+    // Once visitor is used per basic block
     CfgTermInstVisitor(llvm::BasicBlock &B, json &branch_json) : 
     B(B), branch_json(branch_json) { }
 

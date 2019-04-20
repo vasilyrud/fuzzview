@@ -5,6 +5,9 @@
 
 #include "llvm/Support/raw_ostream.h"
 
+// Helper to print errors nicely and consistently,
+// and exit on fatal errors, indicating failure to
+// calling script.
 class Error {
 
   private:

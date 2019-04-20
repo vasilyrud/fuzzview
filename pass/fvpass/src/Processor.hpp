@@ -9,12 +9,17 @@
 
 namespace fv {
 
+// The processor loops through all the
+// functions in the module and calls
+// relevant methods of all the pass
+// features.
 class Processor {
 
   public:
 
     Processor();
 
+    // To be called once to process the module.
     void processModule(llvm::Module &M);
 
   private:

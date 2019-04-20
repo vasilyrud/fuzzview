@@ -6,6 +6,8 @@ Processor::Processor() {
     cfg_builder = CfgBuilder();
 }
 
+// Are there any functions with basic
+// blocks in this module?
 bool Processor::hasFuncDef(llvm::Module &M) {
 
     auto F_iter = M.begin();
@@ -15,6 +17,7 @@ bool Processor::hasFuncDef(llvm::Module &M) {
     return F_iter != M.end();
 }
 
+// Assign block IDs that are unique per module.
 void Processor::assignBlockIds(llvm::Function &F) {
 
     uint32_t block_counter = 0;
@@ -30,6 +33,7 @@ void Processor::assignBlockIds(llvm::Function &F) {
     }
 }
 
+// Make a note globally in the IR metadata.
 bool Processor::wasProcessed(llvm::Module &M) {
 
     return M.getNamedMetadata(WAS_PROCESSED_MD_NAME) != nullptr;
@@ -82,5 +86,7 @@ void Processor::processModule(llvm::Module &M) {
 
     cfg_builder.save(M);
 
+    // Make a note in the IR that the module
+    // has been processed.
     setProcessed(M);
 }

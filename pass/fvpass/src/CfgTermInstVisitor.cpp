@@ -39,6 +39,7 @@ void CfgTermInstVisitor::visitSwitchInst(
     }
 }
 
+// TODO: Have not encountered this yet.
 void CfgTermInstVisitor::visitIndirectBrInst(
     llvm::IndirectBrInst &indir_br_inst) {
 
@@ -46,6 +47,8 @@ void CfgTermInstVisitor::visitIndirectBrInst(
         "Indirect branch instructions currently not supported");
 }
 
+// Other terminating instructions (e.g. return) are
+// not relevant to us.
 void CfgTermInstVisitor::visitTerminatorInst(
     llvm::TerminatorInst &term_inst) { }
 

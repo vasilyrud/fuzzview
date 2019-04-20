@@ -35,6 +35,8 @@ char FvPass::ID = 0;
 
 bool FvPass::runOnModule(Module &M) {
 
+    // The processor handles all the
+    // details of the pass.
     processor = fv::Processor();
     processor.processModule(M);
 
@@ -45,5 +47,7 @@ static void registerFvPass(const PassManagerBuilder &, legacy::PassManagerBase &
     PM.add(new FvPass());
 }
 
+// Make sure that the pass runs last.
 static RegisterStandardPasses RegisterFvPass(PassManagerBuilder::EP_OptimizerLast, registerFvPass);
+// Make sure that the pass is always enabled.
 static RegisterStandardPasses RegisterFvPass0(PassManagerBuilder::EP_EnabledOnOptLevel0, registerFvPass);

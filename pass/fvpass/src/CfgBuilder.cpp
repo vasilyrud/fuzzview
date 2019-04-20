@@ -4,6 +4,8 @@ using namespace fv;
 
 CfgBuilder::CfgBuilder() {}
 
+// Checks whether the dot is an extension or
+// just part of a hidden file.
 bool CfgBuilder::isExtensionDot(std::string raw_filename, size_t dot_location) {
     return (
         dot_location == std::string::npos || // e.g. "test"
@@ -12,12 +14,10 @@ bool CfgBuilder::isExtensionDot(std::string raw_filename, size_t dot_location) {
     );
 }
 
-/*
-* Removes the last extension from the filename, e.g.:
-* "test.c"   -> "test"
-* "test.c.c" -> "test.c"
-* ".test"    -> ".test"
-*/
+// Removes the last extension from the filename, e.g.:
+//     "test.c"   -> "test"
+//     "test.c.c" -> "test.c"
+//     ".test"    -> ".test"
 std::string CfgBuilder::rmFileExtension(std::string raw_filename) {
 
     std::string new_filename = "";
@@ -36,12 +36,10 @@ std::string CfgBuilder::rmFileExtension(std::string raw_filename) {
     return new_filename;
 }
 
-/*
-* Gets the last extension from the filename, e.g.:
-* "test.c"   -> ".c"
-* "test.c.c" -> ".c"
-* ".test"    -> ""
-*/
+// Gets the last extension from the filename, e.g.:
+//     "test.c"   -> ".c"
+//     "test.c.c" -> ".c"
+//     ".test"    -> ""
 std::string CfgBuilder::getFileExtension(std::string raw_filename) {
 
     std::string extension = "";
@@ -83,6 +81,9 @@ llvm::Instruction *CfgBuilder::getFirstInstruction(llvm::Module &M) {
     return &*I_iter;
 }
 
+// The path to the file will be the current dir
+// in which the pass (and thus the compiler) is
+// executing.
 std::string CfgBuilder::getPath(llvm::Module &M) {
 
     llvm::SmallString<256> CWD;
@@ -91,11 +92,13 @@ std::string CfgBuilder::getPath(llvm::Module &M) {
     return CWD.str();
 }
 
+// Get only the filename of the source file.
 std::string CfgBuilder::getName(llvm::Module &M) {
 
     return rmFileExtension(M.getName().str());
 }
 
+// Get only the extension of the source file.
 std::string CfgBuilder::getExtension(llvm::Module &M) {
 
     return getFileExtension(M.getName().str());
@@ -227,6 +230,8 @@ void CfgBuilder::addCall(llvm::CallInst *call_inst, json &calls_json) {
     calls_json.push_back(call_json);
 }
 
+// Check if the function should be ignored
+// (e.g. internal LLVM debugging functions).
 bool CfgBuilder::ignoredFunc(std::string &func_name) {
 
     return (
@@ -234,6 +239,8 @@ bool CfgBuilder::ignoredFunc(std::string &func_name) {
     );
 }
 
+// Returns the signature of the function as
+// a string.
 std::string CfgBuilder::getFuncTypeStr(llvm::FunctionType *func_type) {
 
     std::string func_type_str;
@@ -267,6 +274,8 @@ void CfgBuilder::addNext(llvm::BasicBlock &B, json &next_json) {
     }
 }
 
+// Use visitor to add json object based on
+// type of terminating instruction seen.
 void CfgBuilder::addBranch(llvm::BasicBlock &B, json &branch_json) {
 
     auto *term_inst = B.getTerminator();
