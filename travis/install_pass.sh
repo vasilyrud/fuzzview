@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd $HOME/fuzzview/pass
+cd $TRAVIS_BUILD_DIR/fuzzview/pass
 mkdir build
-cd $HOME/fuzzview/pass/build
+cd $TRAVIS_BUILD_DIR/fuzzview/pass/build
 cmake ..
 make
