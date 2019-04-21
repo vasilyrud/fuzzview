@@ -8,11 +8,15 @@ matrix:
           - master
       cache:
         directories:
-          - $HOME/llvm
-      before_script:
+          - $HOME/llvm/701
+      install:
         - bash install/llvm.sh
-        - sudo bash install/cmake.sh
+        - CMAKE_DIR="${TRAVIS_BUILD_DIR}/cmake"
+        - sudo bash install/cmake.sh $CMAKE_DIR
+      before_script:
+        - PATH="${CMAKE_DIR}:${CMAKE_DIR}/bin:$PATH"
         - export FV_LLVM_DIR=$HOME/llvm/701/bin
-        - export PATH="/usr/local:$PATH"
+        - export FV_DIR=$TRAVIS_BUILD_DIR
       script:
+        - echo $PATH
         - bash install/pass.sh

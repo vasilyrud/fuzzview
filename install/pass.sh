@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd $TRAVIS_BUILD_DIR/pass
+cd $FV_DIR/pass
 mkdir build
-cd $TRAVIS_BUILD_DIR/pass/build
+cd $FV_DIR/pass/build
 cmake ..
 make
