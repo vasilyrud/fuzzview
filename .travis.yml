@@ -2,12 +2,13 @@ matrix:
   include:
     - language: cpp
       os: linux
+      dist: xenial
       cache:
         directories:
           - $HOME/llvm
       before_script:
-        - ./travis/install_llvm.sh
-        - ./travis/install_cmake.sh
+        - bash travis/install_llvm.sh
+        - bash travis/install_cmake.sh
         - export FV_LLVM_DIR=$HOME/llvm/701/bin
       script:
-        - ./travis/install_pass.sh
+        - bash travis/install_pass.sh
