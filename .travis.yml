@@ -1,6 +1,8 @@
 matrix:
   include:
-    - language: generic
+    # - language: generic
+    - language: python
+      python: 3.5
       os: linux
       dist: xenial
       cache:
