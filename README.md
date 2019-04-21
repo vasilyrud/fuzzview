@@ -34,6 +34,8 @@ cmake ..
 make
 ```
 
+## Running fuzzview
+
 ### Using LLVM pass
 
 To compile any program with custom clang, set:
