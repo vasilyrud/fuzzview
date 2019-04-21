@@ -1,5 +1,7 @@
 # fuzzview
 
+[![Build Status](https://travis-ci.org/vasilyrud/fuzzview.svg?branch=master)](https://travis-ci.org/vasilyrud/fuzzview)
+
 ## Prerequisites
 
 Works with LLVM version 7.0.1
