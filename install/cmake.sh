@@ -11,4 +11,4 @@ mkdir -p $1
 bash cmake-3.14.0-Linux-x86_64.sh --prefix=$1 --skip-license
 
 rm cmake-3.14.0-Linux-x86_64.sh
-cmake --version
+$1/bin/cmake --version

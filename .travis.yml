@@ -11,10 +11,10 @@ matrix:
           - $HOME/llvm/701
       install:
         - bash install/llvm.sh
-        - CMAKE_DIR="${TRAVIS_BUILD_DIR}/cmake"
+        - CMAKE_DIR=$HOME/cmake
         - sudo bash install/cmake.sh $CMAKE_DIR
       before_script:
-        - PATH="${CMAKE_DIR}:${CMAKE_DIR}/bin:$PATH"
+        - export PATH="$CMAKE_DIR:$CMAKE_DIR/bin:$PATH"
         - export FV_LLVM_DIR=$HOME/llvm/701/bin
         - export FV_DIR=$TRAVIS_BUILD_DIR
       script:
