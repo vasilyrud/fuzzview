@@ -12,11 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# To build:
-# docker build -t fuzzview -f Dockerfile .
-# export FV_DOCKER_CONTAINER=$(docker run -it -d fuzzview /bin/bash)
-# docker exec -it $FV_DOCKER_CONTAINER bash
-
 # Use raw Ubuntu as base
 FROM ubuntu:16.04
 
