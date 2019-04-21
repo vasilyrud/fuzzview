@@ -2,11 +2,13 @@
 
 [![Build Status](https://travis-ci.org/vasilyrud/fuzzview.svg?branch=master)](https://travis-ci.org/vasilyrud/fuzzview)
 
-## Prerequisites
+## Getting started
 
-Works with LLVM version 7.0.1
+### Prerequisites
 
-## To get started
+LLVM pass works best and is tested with LLVM version 7.0.1
+
+### Set environment variables
 
 Set `FV_LLVM_DIR` to the location of LLVM install:
 
@@ -20,6 +22,8 @@ Set `FV_DIR` to the location of this folder:
 export FV_DIR=/path/to/fuzzview
 ```
 
+### Compile LLVM pass
+
 To compile LLVM pass:
 
 ```
@@ -29,6 +33,8 @@ cd build
 cmake ..
 make
 ```
+
+### Using LLVM pass
 
 To compile any program with custom clang, set:
 
@@ -41,6 +47,8 @@ To make `.cfg.json` files readable, set before compiling:
 ```
 FV_NICE_JSON=1
 ```
+
+### Running fuzzview
 
 Running fuzzview on test progs:
 
