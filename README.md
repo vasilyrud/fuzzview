@@ -21,7 +21,7 @@ Showing the CFG and callgraph of the entire program is difficult with normal gra
 
 Because CFGs always follow a particular pattern, it is easy to represent them in a condensed manner without loosing information. Fuzzview aims to bridge the gap between per-file coverage visualizations and the grid view of the entire program, to provide instant feedback to the tester about how the fuzzing run is going.
 
-That being said, this tool is at the early stage of testing how well the idea transfers into reality :grinning: .
+That being said, this tool is still at a very early stage.
 
 ## Installation
 
@@ -123,7 +123,7 @@ To compile a single file with the LLVM pass, run `python3 $FV_DIR/fv-compiler.py
 After a program has been compiled with the LLVM pass, you can run fuzzview to generate fuzzview graph files. To do so, point fuzzview to the directory of the target program's source:
 
 ```bash
-python3 $FV_DIR/fuzzview dir /path/to/target/source
+python3 $FV_DIR/fuzzview dir /path/to/target/source/dir
 ```
 
 At the moment, fuzzview does not do more than generate condensed graph images for each file. Check back later for updates on a more complete workflow!
