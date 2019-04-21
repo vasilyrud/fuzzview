@@ -77,7 +77,7 @@ RUN mkdir fuzzview
 COPY ./fuzzview/ $fv_dir/fuzzview/
 
 WORKDIR $fv_dir
-RUN pip3 install -e fuzzview
+RUN pip3 install -e ./fuzzview
 
 # Copy over tests
 WORKDIR $fv_dir
