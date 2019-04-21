@@ -1,5 +1,5 @@
 .vscode
-*.DS_Store
+**/.DS_Store
 
 **/*.bc.tmp
 **/*.bc-*
@@ -23,4 +23,4 @@ fuzzview/fuzzview.egg-info
 __pycache__/
 .pytest_cache/
 
-!*.gitkeep
+!**/.gitkeep

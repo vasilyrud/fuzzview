@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:experimental
-
 # Copyright 2019 Vasily Rudchenko - Fuzzview
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +13,8 @@
 # limitations under the License.
 
 # To build:
-# DOCKER_BUILDKIT=1 docker build -t fuzzview -f Dockerfile --ssh default=$SSH_AUTH_SOCK .
-# export FV_DOCKER_CONTAINER=$(docker run -v $(PWD):/root/fuzzview -it -d fuzzview /bin/bash)
+# docker build -t fuzzview -f Dockerfile .
+# export FV_DOCKER_CONTAINER=$(docker run -it -d fuzzview /bin/bash)
 # docker exec -it $FV_DOCKER_CONTAINER bash
 
 # Use raw Ubuntu as base
@@ -56,32 +54,39 @@ RUN chmod +x cmake-3.14.0-Linux-x86_64.sh
 RUN bash cmake-3.14.0-Linux-x86_64.sh --prefix=/usr/local --skip-license
 RUN rm cmake-3.14.0-Linux-x86_64.sh
 
-# Install Python dependencies
-RUN pip3 install \
-    pytest \
-    Pillow \
-    palettable
-
-# Download public keys for github
-RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-# Clone openssl repo
+# Make fuzzview folder
 WORKDIR /root
-RUN --mount=type=ssh git clone -b 'OpenSSL_1_0_1g' --single-branch --depth 1 git@github.com:openssl/openssl.git openssl
-ENV OPENSSL_DIR /root/openssl
-
-# Install openssl
-WORKDIR /root/openssl
-ENV CC "python3 /root/fuzzview/fv-compiler.py"
-RUN mkdir bin
-RUN ./config no-threads --prefix=/root/openssl/bin --openssldir=/root/openssl/bin/openssl
-RUN make
-RUN make install_sw
-
-# # Copy root folder
-# WORKDIR /root
-# RUN mkdir fuzzview
-# COPY ./ /root/fuzzview/
-
-# Set fuzzview location
+RUN mkdir fuzzview
 ENV FV_DIR /root/fuzzview
+ARG fv_dir="/root/fuzzview"
+
+# Install fuzzview LLVM pass
+WORKDIR $fv_dir
+RUN mkdir pass
+COPY ./pass/ $fv_dir/pass/
+
+WORKDIR $fv_dir/pass
+RUN mkdir build
+WORKDIR $fv_dir/pass/build
+RUN cmake ..
+RUN make
+
+# Install fuzzview Python program
+WORKDIR $fv_dir
+RUN mkdir fuzzview
+COPY ./fuzzview/ $fv_dir/fuzzview/
+
+WORKDIR $fv_dir
+RUN pip3 install -e fuzzview
+
+# Copy over tests
+WORKDIR $fv_dir
+RUN mkdir tests
+COPY ./tests/ $fv_dir/tests/
+
+# Copy fv-compiler
+WORKDIR $fv_dir
+COPY ./fv-compiler.py $fv_dir/fv-compiler.py
+
+# Final entry location
+WORKDIR $fv_dir
