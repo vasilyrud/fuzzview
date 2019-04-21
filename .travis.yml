@@ -10,8 +10,8 @@ matrix:
         directories:
           - $HOME/llvm
       before_script:
-        - bash travis/install_llvm.sh
-        - bash travis/install_cmake.sh
+        - bash install/llvm.sh
+        - sudo bash install/cmake.sh
         - export FV_LLVM_DIR=$HOME/llvm/701/bin
       script:
-        - bash travis/install_pass.sh
+        - bash install/pass.sh
