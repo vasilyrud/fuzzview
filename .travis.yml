@@ -2,19 +2,18 @@ language: python
 python: 3.5
 os: linux
 dist: xenial
-cache:
-  directories:
-    - $HOME/llvm/701
 install:
   - bash install/llvm.sh
   - ls $HOME/llvm/701
   - ls $HOME/llvm/701/bin
   - ls $HOME/llvm/701/bin/bin
   - $HOME/llvm/701/bin/bin/clang --version
-  - python -c "exit(1)"
   - CMAKE_DIR=$HOME/cmake
   - sudo bash install/cmake.sh $CMAKE_DIR
   - pip install pytest pytest-cov codecov
+cache:
+  directories:
+    - $HOME/llvm/701
 before_script:
   - pip install -e ./fuzzview
   - pip --version
