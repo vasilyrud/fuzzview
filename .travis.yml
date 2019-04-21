@@ -5,11 +5,10 @@ dist: xenial
 cache:
   directories:
     - $HOME/llvm/701
+before_install:
+  - sudo apt-get -y install graphviz
 install:
   - bash install/llvm.sh
-  - ls $HOME/llvm/701
-  - ls $HOME/llvm/701/bin
-  - ls $HOME/llvm/701/bin/bin
   - $HOME/llvm/701/bin/bin/clang --version
   - CMAKE_DIR=$HOME/cmake
   - sudo bash install/cmake.sh $CMAKE_DIR
