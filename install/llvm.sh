@@ -1,7 +1,8 @@
 #!/bin/bash
 
 if [ -d "$HOME/llvm" ]; then
-  exit 0
+    echo "Skipping LLVM build because ${HOME}/llvm dir already exists."
+    exit 0
 fi
 
 cd $HOME
