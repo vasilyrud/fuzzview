@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -d "$HOME/llvm" ]; then
+  exit 0
+fi
+
 cd $HOME
 mkdir -p llvm/701
 

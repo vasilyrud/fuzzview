@@ -13,5 +13,6 @@ matrix:
         - bash install/llvm.sh
         - sudo bash install/cmake.sh
         - export FV_LLVM_DIR=$HOME/llvm/701/bin
+        - export PATH="/usr/local:$PATH"
       script:
         - bash install/pass.sh
