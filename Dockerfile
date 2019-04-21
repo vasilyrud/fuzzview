@@ -31,23 +31,20 @@ RUN apt-get update && \
         graphviz \
         tmux
 
-# Install LLVM 7.0.1
+# Make the installation scripts dir
 WORKDIR /root
-RUN mkdir -p llvm/701
+RUN mkdir install
 
-WORKDIR /root/llvm/701
-RUN wget http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-RUN tar -xJf clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-RUN rm clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-RUN mv clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04 bin
+# Install LLVM
+WORKDIR /root/install
+COPY ./install/llvm.sh /root/install/llvm.sh
+RUN bash /root/install/llvm.sh
 ENV FV_LLVM_DIR /root/llvm/701/bin
 
 # Install cmake (newer version than that available with apt)
-WORKDIR /root
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0-Linux-x86_64.sh
-RUN chmod +x cmake-3.14.0-Linux-x86_64.sh
-RUN bash cmake-3.14.0-Linux-x86_64.sh --prefix=/usr/local --skip-license
-RUN rm cmake-3.14.0-Linux-x86_64.sh
+WORKDIR /root/install
+COPY ./install/cmake.sh /root/install/cmake.sh
+RUN bash /root/install/cmake.sh /usr/local
 
 # Make fuzzview folder
 WORKDIR /root
@@ -60,11 +57,9 @@ WORKDIR $fv_dir
 RUN mkdir pass
 COPY ./pass/ $fv_dir/pass/
 
-WORKDIR $fv_dir/pass
-RUN mkdir build
-WORKDIR $fv_dir/pass/build
-RUN cmake ..
-RUN make
+WORKDIR /root/install
+COPY ./install/pass.sh /root/install/pass.sh
+RUN bash /root/install/pass.sh
 
 # Install fuzzview Python program
 WORKDIR $fv_dir
