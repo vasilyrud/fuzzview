@@ -3,6 +3,9 @@ matrix:
     - language: cpp
       os: linux
       dist: xenial
+      branches:
+        only:
+          - master
       cache:
         directories:
           - $HOME/llvm
