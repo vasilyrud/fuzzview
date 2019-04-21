@@ -1,22 +1,27 @@
-matrix:
-  include:
-    - language: cpp
-      os: linux
-      dist: xenial
-      branches:
-        only:
-          - master
-      cache:
-        directories:
-          - $HOME/llvm/701
-      install:
-        - bash install/llvm.sh
-        - CMAKE_DIR=$HOME/cmake
-        - sudo bash install/cmake.sh $CMAKE_DIR
-      before_script:
-        - export PATH="$CMAKE_DIR:$CMAKE_DIR/bin:$PATH"
-        - export FV_LLVM_DIR=$HOME/llvm/701/bin
-        - export FV_DIR=$TRAVIS_BUILD_DIR
-      script:
-        - echo $PATH
-        - bash install/pass.sh
+language: python
+python: 3.5
+os: linux
+dist: xenial
+cache:
+  directories:
+    - $HOME/llvm/701
+before_install:
+  - sudo apt-get -y install graphviz
+install:
+  - bash install/llvm.sh
+  - $HOME/llvm/701/bin/bin/clang --version
+  - CMAKE_DIR=$HOME/cmake
+  - sudo bash install/cmake.sh $CMAKE_DIR
+  - pip install pytest pytest-cov codecov
+before_script:
+  - pip install -e ./fuzzview
+  # Test that fuzzview can be imported:
+  - python -c "import fuzzview.const"
+  - export PATH="$CMAKE_DIR:$CMAKE_DIR/bin:$PATH"
+  - export FV_LLVM_DIR=$HOME/llvm/701/bin
+  - export FV_DIR=$TRAVIS_BUILD_DIR
+  - echo $PATH
+script:
+  - bash install/pass.sh
+  - python -m pytest --cov-report=xml --cov=./
+  - bash <(curl -s https://codecov.io/bash)
