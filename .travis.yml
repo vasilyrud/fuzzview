@@ -1,6 +1,6 @@
 matrix:
   include:
-    - language: cpp
+    - language: generic
       os: linux
       dist: xenial
       cache:
@@ -17,3 +17,5 @@ matrix:
       script:
         - echo $PATH
         - bash install/pass.sh
+        - python --version
+        - python3 --version
