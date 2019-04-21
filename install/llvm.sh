@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # In case Travis cached this already
-if [ -d "$HOME/llvm/701" ]; then
-    echo "Skipping LLVM build because ${HOME}/llvm/701 dir already exists."
+if [ -d "$HOME/llvm/701/bin" ]; then
+    echo "Skipping LLVM build because ${HOME}/llvm/701/bin dir already exists."
     exit 0
 fi
 
