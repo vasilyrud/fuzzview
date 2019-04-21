@@ -1,23 +1,24 @@
-matrix:
-  include:
-    - language: python
-      python: 3.5
-      os: linux
-      dist: xenial
-      cache:
-        directories:
-          - $HOME/llvm/701
-      install:
-        - bash install/llvm.sh
-        - CMAKE_DIR=$HOME/cmake
-        - sudo bash install/cmake.sh $CMAKE_DIR
-        - sudo pip install pytest pytest-cov codecov
-      before_script:
-        - sudo pip install -e fuzzview
-        - export PATH="$CMAKE_DIR:$CMAKE_DIR/bin:$PATH"
-        - export FV_LLVM_DIR=$HOME/llvm/701/bin
-        - export FV_DIR=$TRAVIS_BUILD_DIR
-        - echo $PATH
-      script:
-        - bash install/pass.sh
-        - python -m pytest --cov=./
+language: python
+python: 3.5
+os: linux
+dist: xenial
+cache:
+  directories:
+    - $HOME/llvm/701
+install:
+  - bash install/llvm.sh
+  - CMAKE_DIR=$HOME/cmake
+  - sudo bash install/cmake.sh $CMAKE_DIR
+  - pip install pytest pytest-cov codecov
+before_script:
+  - pip install -e ./fuzzview
+  - pip --version
+  - python --version
+  - python -c "import fuzzview.const"
+  - export PATH="$CMAKE_DIR:$CMAKE_DIR/bin:$PATH"
+  - export FV_LLVM_DIR=$HOME/llvm/701/bin
+  - export FV_DIR=$TRAVIS_BUILD_DIR
+  - echo $PATH
+script:
+  - bash install/pass.sh
+  - python -m pytest --cov=./

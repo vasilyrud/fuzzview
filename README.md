@@ -65,6 +65,6 @@ Running tests:
 
 ```
 cd $FV_DIR
-pip3 install -e fuzzview
+pip3 install -e ./fuzzview
 python3 -m pytest -x
 ```
