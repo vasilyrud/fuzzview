@@ -34,22 +34,30 @@ branches1: branches1.bc
 	$(CC) $(LDFLAGS) $< -o $(BIN)/$@
 
 clean:
-	rm ./*.o 2>/dev/null || true
-	rm ./*.bc 2>/dev/null || true
-	rm ./*.bc-* 2>/dev/null || true
-	rm ./*.bc.tmp 2>/dev/null || true
-	rm ./*.cfg.json 2>/dev/null || true
-	rm ./*.cfg.dot 2>/dev/null || true
-	rm ./*.cfg.pdf 2>/dev/null || true
-	rm ./*.cfg.png 2>/dev/null || true
+	rm -r \
+		./*.o \
+		./*.bc \
+		./*.bc-* \
+		./*.bc.tmp \
+		./*.cfg.json \
+		./*.cfg.dot \
+		./*.cfg.pdf \
+		./*.file.png \
+		./*_fuzzview_function_images \
+	2>/dev/null || true
 	
-	rm ./**/*.o 2>/dev/null || true
-	rm ./**/*.bc 2>/dev/null || true
-	rm ./**/*.bc-* 2>/dev/null || true
-	rm ./**/*.bc.tmp 2>/dev/null || true
-	rm ./**/*.cfg.json 2>/dev/null || true
-	rm ./**/*.cfg.dot 2>/dev/null || true
-	rm ./**/*.cfg.pdf 2>/dev/null || true
-	rm ./**/*.cfg.png 2>/dev/null || true
+	rm -r \
+		./**/*.o \
+		./**/*.bc \
+		./**/*.bc-* \
+		./**/*.bc.tmp \
+		./**/*.cfg.json \
+		./**/*.cfg.dot \
+		./**/*.cfg.pdf \
+		./**/*.file.png \
+		./**/*_fuzzview_function_images \
+	2>/dev/null || true
 	
-	rm -r bin/* 2>/dev/null || true
+	rm -r \
+		bin/* \
+	2>/dev/null || true
