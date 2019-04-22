@@ -20,6 +20,7 @@ import subprocess
 
 from fuzzview.cfg.grapher import DirGrapher
 from fuzzview.cfg.dot.filegraph import DotFileGraph
+from fuzzview.cfg.fv.filegraph import FVFileGraph
 import fuzzview.const as const
 import fuzzview.util as util
 
@@ -40,9 +41,12 @@ def compile_progs():
         env=new_env
     )
 
-    # generate dot graph pdfs
     dir_grapher = DirGrapher(util.getenv(const.FV_ENV_VAR) + '/' + PROGS_DIR)
+
+    # generate dot graph pdfs
     dir_grapher.save_graphs(DotFileGraph)
+    # generate fv graph images
+    dir_grapher.save_graphs(FVFileGraph)
 
     return proc_ret, PROGS_DIR
 

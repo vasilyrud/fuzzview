@@ -59,5 +59,5 @@ clean:
 	2>/dev/null || true
 	
 	rm -r \
-		bin/* \
+		./bin/* \
 	2>/dev/null || true
